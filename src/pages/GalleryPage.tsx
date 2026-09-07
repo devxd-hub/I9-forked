@@ -216,7 +216,7 @@ export const GalleryPage: React.FC<GalleryPageProps> = ({ onRouteChange }) => {
             </p>
             <div className="pt-4">
               <PrimaryButton
-                label="JOIN THE CLUB →"
+                label="GET IN TOUCH →"
                 onClick={() => onRouteChange('/contact')}
                 className="bg-[#EF5A2A] border-[#EF5A2A] text-white hover:bg-white hover:text-[#0A0A09]"
               />

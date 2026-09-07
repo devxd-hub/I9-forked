@@ -162,3 +162,86 @@
     scroll-behavior: auto !important;
   }
 }
+
+/* 6. Custom Explore Button - NEXUS Editorial Style */
+.cssbuttons-io-button {
+  background: #0A0A09;
+  color: #F3EEE5;
+  font-family: 'Dosis', -apple-system, system-ui, sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  border-radius: 0px;
+  border: 1px solid #0A0A09;
+  display: inline-flex;
+  align-items: center;
+  overflow: hidden;
+  position: relative;
+  height: 48px;
+  padding: 0 46px 0 22px;
+  cursor: pointer;
+  user-select: none;
+  text-decoration: none;
+  white-space: nowrap;
+  outline: none;
+  transition: border-color 0.3s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cssbuttons-io-button:hover {
+  border-color: #EF5A2A;
+}
+
+.cssbuttons-io-button:focus-visible {
+  outline: 2px solid #EF5A2A;
+  outline-offset: 2px;
+}
+
+.cssbuttons-io-button .btn-text {
+  position: relative;
+  z-index: 2;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), color 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cssbuttons-io-button:hover .btn-text {
+  color: #FFFFFF;
+  transform: translateX(2px);
+}
+
+.cssbuttons-io-button .icon {
+  background: #EF5A2A;
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 11px;
+  top: 3px;
+  bottom: 3px;
+  right: 3px;
+  height: calc(100% - 6px);
+  width: 36px;
+  border-radius: 0px;
+  box-shadow: none;
+  transition: width 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 1;
+}
+
+.cssbuttons-io-button:hover .icon {
+  width: calc(100% - 6px);
+}
+
+.cssbuttons-io-button .icon svg {
+  width: 16px;
+  height: 16px;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  color: #FFFFFF;
+}
+
+.cssbuttons-io-button:hover .icon svg {
+  transform: translateX(2px);
+}
+
+.cssbuttons-io-button:active {
+  transform: scale(0.98);
+}
+

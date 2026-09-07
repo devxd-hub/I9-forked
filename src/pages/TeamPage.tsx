@@ -171,18 +171,18 @@ export const TeamPage: React.FC<TeamPageProps> = ({ onRouteChange }) => {
           <div className="max-w-3xl mx-auto text-center space-y-6">
             <SectionLabel
               number="04.4"
-              label="JOIN THE SQUAD"
+              label="GET IN TOUCH"
               className="justify-center text-[#F3EEE5]/70"
             />
             <h2 className="font-fraunces font-bold text-3xl sm:text-4xl text-[#F3EEE5] uppercase tracking-tight">
-              Want to join a NEXUS squad or lead a project?
+              Have a project or want to collaborate with the squad?
             </h2>
             <p className="font-bitter text-[#F3EEE5]/75 text-base sm:text-lg leading-relaxed">
-              We welcome new members of any major, skill level, or background. Come to a studio sprint, find peers who share your interests, and start building.
+              We welcome partnerships, proposals, and inquiries. Reach out to connect with our leads, visit an open studio crit, and discover what we're building.
             </p>
             <div className="pt-4">
               <PrimaryButton
-                label="JOIN THE CLUB →"
+                label="GET IN TOUCH →"
                 onClick={() => onRouteChange('/contact')}
                 className="bg-[#EF5A2A] border-[#EF5A2A] text-white hover:bg-white hover:text-[#0A0A09]"
               />

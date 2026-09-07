@@ -19,7 +19,7 @@ interface FinalCTAProps {
  * FINAL CALL TO ACTION
  * Heading: BUILD WHAT'S NEXT.
  * Subhead: If you want to make projects with people who care about craft, design, and code, NEXUS is where you start.
- * CTA: JOIN NEXUS →
+ * CTA: GET IN TOUCH →
  * Secondary CTA: EXPLORE PROJECTS →
  */
 export const FinalCTA: React.FC<FinalCTAProps> = ({ onRouteChange }) => {
@@ -47,7 +47,7 @@ export const FinalCTA: React.FC<FinalCTAProps> = ({ onRouteChange }) => {
 
           <SectionLabel
             number="06"
-            label="JOIN THE SQUAD"
+            label="GET IN TOUCH"
             className="justify-center text-[#F3EEE5]/70"
           />
 
@@ -65,7 +65,7 @@ export const FinalCTA: React.FC<FinalCTAProps> = ({ onRouteChange }) => {
 
           <div className="pt-4 flex flex-wrap items-center justify-center gap-4">
             <PrimaryButton
-              label="JOIN NEXUS →"
+              label="GET IN TOUCH →"
               onClick={() => onRouteChange('/contact')}
               magnetic={true}
               className="bg-[#EF5A2A] border-[#EF5A2A] text-white hover:bg-white hover:text-[#0A0A09] hover:border-white"

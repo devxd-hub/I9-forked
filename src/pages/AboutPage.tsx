@@ -269,12 +269,12 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onRouteChange }) => {
               </p>
               <div className="pt-4 flex flex-wrap gap-4">
                 <PrimaryButton
-                  label="JOIN THE CLUB →"
-                  onClick={() => onRouteChange('/contact')}
-                />
-                <SecondaryButton
                   label="EXPLORE PROJECTS →"
                   onClick={() => onRouteChange('/projects')}
+                />
+                <SecondaryButton
+                  label="GET IN TOUCH →"
+                  onClick={() => onRouteChange('/contact')}
                 />
               </div>
             </div>

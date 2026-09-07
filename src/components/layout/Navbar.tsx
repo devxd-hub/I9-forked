@@ -4,10 +4,9 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { Menu, X, ArrowUpRight } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import { Container } from '../primitives/Container.tsx';
-import { NexusLogo, NexusIcon } from '../brand/NexusLogo.tsx';
-import { useMagnetic } from '../primitives/Button.tsx';
+import { NexusLogo } from '../brand/NexusLogo.tsx';
 import { AppRoute, NavItem } from '../../types.ts';
 
 interface NavbarProps {
@@ -27,7 +26,6 @@ const NAV_ITEMS: NavItem[] = [
 export const Navbar: React.FC<NavbarProps> = ({ currentRoute, onRouteChange }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const ctaMagnetic = useMagnetic(true);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -109,27 +107,13 @@ export const Navbar: React.FC<NavbarProps> = ({ currentRoute, onRouteChange }) =
           </nav>
 
           {/* Action CTA & Mobile Menu Button */}
-          <div className="flex items-center gap-3 sm:gap-4">
-            <button
-              id="navbar-join-button"
-              type="button"
-              onMouseMove={ctaMagnetic.handleMouseMove}
-              onMouseLeave={ctaMagnetic.handleMouseLeave}
-              style={ctaMagnetic.style}
-              onClick={(e) => handleNavClick('/contact', e)}
-              className="group hidden sm:inline-flex items-center gap-2.5 px-5 py-2.5 bg-[#0A0A09] text-[#F3EEE5] text-xs font-dosis font-bold tracking-[0.2em] uppercase transition-all duration-350 ease-[cubic-bezier(0.16,1,0.3,1)] hover:bg-[#EF5A2A] hover:text-white cursor-pointer select-none focus:outline-none focus:ring-2 focus:ring-[#EF5A2A] active:scale-[0.98]"
-            >
-              <NexusIcon size="xs" />
-              <span>JOIN THE CLUB</span>
-              <ArrowUpRight className="w-3.5 h-3.5 transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-            </button>
-
-            {/* Mobile Hamburger Button */}
+          {/* Mobile Hamburger Button */}
+          <div className="lg:hidden flex items-center">
             <button
               id="mobile-menu-trigger"
               type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden p-2.5 text-[#0A0A09] hover:text-[#EF5A2A] border border-[rgba(10,10,9,0.15)] focus:outline-none focus:ring-2 focus:ring-[#EF5A2A]"
+              className="p-2.5 text-[#0A0A09] hover:text-[#EF5A2A] border border-[rgba(10,10,9,0.15)] focus:outline-none focus:ring-2 focus:ring-[#EF5A2A]"
               aria-label={mobileMenuOpen ? 'Close menu' : 'Open main menu'}
               aria-expanded={mobileMenuOpen}
             >
@@ -169,21 +153,10 @@ export const Navbar: React.FC<NavbarProps> = ({ currentRoute, onRouteChange }) =
                 </a>
               );
             })}
-
-            <div className="pt-4 mt-2 border-t border-[rgba(10,10,9,0.1)]">
-              <button
-                type="button"
-                onClick={(e) => handleNavClick('/contact', e)}
-                className="w-full flex items-center justify-center gap-2 px-6 py-4 bg-[#0A0A09] text-[#F3EEE5] text-sm font-dosis font-bold tracking-[0.2em] uppercase hover:bg-[#EF5A2A] hover:text-white transition-colors"
-              >
-                <NexusIcon size="xs" />
-                <span>JOIN THE CLUB</span>
-                <ArrowUpRight className="w-4 h-4" />
-              </button>
-            </div>
           </nav>
         </div>
       )}
+
     </header>
   );
 };

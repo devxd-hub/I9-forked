@@ -111,13 +111,7 @@ export const CinematicPreloader: React.FC<CinematicPreloaderProps> = ({
   if (stage === 'done') return null;
 
   // Viewport center is at (600, 400) in our 1200x800 coordinate space
-  // Path 1 (Idea): Starts top-left (140, 160), sweeps through center (600, 400) to bottom-right (1060, 640)
-  const path1 = 'M 140 160 C 320 250, 470 375, 600 400 C 730 425, 880 550, 1060 640';
-
-  // Path 2 (People/Talent): Starts bottom-left (140, 640), sweeps through center (600, 400) to top-right (1060, 160)
-  const path2 = 'M 140 640 C 320 550, 470 425, 600 400 C 730 375, 880 250, 1060 160';
-
-  // Path 3 (Ambient Horizontal Guideline): passes gently across center
+  // Ambient Horizontal Guideline: passes gently across center
   const pathHorizon = 'M 0 400 C 350 395, 520 400, 600 400 C 680 400, 850 405, 1200 400';
 
   return (
@@ -237,95 +231,7 @@ export const CinematicPreloader: React.FC<CinematicPreloaderProps> = ({
             fill="none"
           />
 
-          {/* ========================================================================= */}
-          {/* TRAJECTORY 1 (Upper-Left to Lower-Right through Center)                   */}
-          {/* ========================================================================= */}
-          {/* Static subtle trace */}
-          <path
-            d={path1}
-            stroke="rgba(239, 90, 42, 0.14)"
-            strokeWidth="1"
-            fill="none"
-          />
 
-          {/* Active travelling dashed trajectory 1 */}
-          <motion.path
-            d={path1}
-            stroke="#EF5A2A"
-            strokeWidth="1.75"
-            strokeDasharray="6 4"
-            fill="none"
-            initial={{ pathLength: 0, opacity: 0 }}
-            animate={
-              shouldReduceMotion
-                ? { pathLength: 1, opacity: 0.4 }
-                : {
-                    pathLength:
-                      stage === 'dormant' || stage === 'signals'
-                        ? 0
-                        : stage === 'movement'
-                        ? 0.5
-                        : 1,
-                    opacity:
-                      stage === 'dormant'
-                        ? 0
-                        : stage === 'signals'
-                        ? 0.2
-                        : stage === 'stillness' || stage === 'handoff'
-                        ? 0.3
-                        : 0.85,
-                  }
-            }
-            transition={{
-              duration: stage === 'movement' ? 0.9 : 0.6,
-              ease: [0.16, 1, 0.3, 1],
-            }}
-          />
-
-          {/* ========================================================================= */}
-          {/* TRAJECTORY 2 (Lower-Left to Upper-Right through Center)                   */}
-          {/* ========================================================================= */}
-          {/* Static subtle trace */}
-          <path
-            d={path2}
-            stroke="rgba(239, 90, 42, 0.14)"
-            strokeWidth="1"
-            fill="none"
-          />
-
-          {/* Active travelling dashed trajectory 2 */}
-          <motion.path
-            d={path2}
-            stroke="#EF5A2A"
-            strokeWidth="1.75"
-            strokeDasharray="6 4"
-            fill="none"
-            initial={{ pathLength: 0, opacity: 0 }}
-            animate={
-              shouldReduceMotion
-                ? { pathLength: 1, opacity: 0.4 }
-                : {
-                    pathLength:
-                      stage === 'dormant' || stage === 'signals'
-                        ? 0
-                        : stage === 'movement'
-                        ? 0.5
-                        : 1,
-                    opacity:
-                      stage === 'dormant'
-                        ? 0
-                        : stage === 'signals'
-                        ? 0.2
-                        : stage === 'stillness' || stage === 'handoff'
-                        ? 0.3
-                        : 0.85,
-                  }
-            }
-            transition={{
-              duration: stage === 'movement' ? 0.9 : 0.6,
-              ease: [0.16, 1, 0.3, 1],
-            }}
-          />
 
           {/* ========================================================================= */}
           {/* SIGNAL 1: THE IDEA (Origin at 140, 160 -> moves toward 600, 400)          */}
@@ -544,25 +450,7 @@ export const CinematicPreloader: React.FC<CinematicPreloaderProps> = ({
                 strokeWidth="1.2"
                 strokeDasharray="4 4"
               />
-              {/* Diagonal accent markers echoing the NEXUS X geometry */}
-              <line
-                x1="520"
-                y1="340"
-                x2="680"
-                y2="460"
-                stroke="rgba(239,90,42,0.25)"
-                strokeWidth="1"
-                strokeDasharray="3 3"
-              />
-              <line
-                x1="520"
-                y1="460"
-                x2="680"
-                y2="340"
-                stroke="rgba(239,90,42,0.25)"
-                strokeWidth="1"
-                strokeDasharray="3 3"
-              />
+
             </motion.g>
           )}
         </svg>

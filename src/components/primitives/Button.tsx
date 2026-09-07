@@ -283,3 +283,6 @@ export const TextLink: React.FC<BaseButtonProps> = ({
     </button>
   );
 };
+
+export { ExploreNexusButton } from '../home/ExploreButton.tsx';
+export type { ExploreNexusButtonProps } from '../home/ExploreButton.tsx';

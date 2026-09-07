@@ -16,12 +16,11 @@ interface ContactPageProps {
   onRouteChange: (route: AppRoute) => void;
 }
 
-type ContactIntent = 'JOIN THE CLUB' | 'COLLABORATE WITH US' | 'ASK A QUESTION';
+type ContactIntent = 'COLLABORATE WITH US' | 'ASK A QUESTION';
 
 /**
- * CONTACT / JOIN PAGE
+ * CONTACT PAGE
  * Clear purpose:
- * - JOIN THE CLUB
  * - COLLABORATE WITH US
  * - ASK A QUESTION
  *
@@ -31,7 +30,7 @@ type ContactIntent = 'JOIN THE CLUB' | 'COLLABORATE WITH US' | 'ASK A QUESTION';
  * - What to expect after reaching out
  */
 export const ContactPage: React.FC<ContactPageProps> = ({ onRouteChange }) => {
-  const [intent, setIntent] = useState<ContactIntent>('JOIN THE CLUB');
+  const [intent, setIntent] = useState<ContactIntent>('COLLABORATE WITH US');
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [majorOrAffiliation, setMajorOrAffiliation] = useState('');
@@ -62,10 +61,10 @@ export const ContactPage: React.FC<ContactPageProps> = ({ onRouteChange }) => {
               staggerMs={40}
               className="font-fraunces font-bold text-4xl sm:text-5xl lg:text-6xl text-[#0A0A09] leading-[1.08] tracking-tight"
             >
-              Reach out, drop in, or join a squad.
+              Reach out, collaborate, or connect.
             </RevealText>
             <p className="font-bitter text-lg text-[#66615A] leading-relaxed max-w-3xl">
-              NEXUS is open to all college students. Whether you want to join an upcoming project sprint, pitch a collaborative proposal, or ask a question about our studio lab, we would love to hear from you.
+              Pitch a collaborative proposal, partner with our squads, or ask a question about our studio lab — we would love to hear from you.
             </p>
           </div>
         </Container>
@@ -82,8 +81,8 @@ export const ContactPage: React.FC<ContactPageProps> = ({ onRouteChange }) => {
                 <span className="font-dosis text-xs uppercase tracking-[0.2em] text-[#66615A] font-bold block">
                   SELECT PURPOSE:
                 </span>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  {(['JOIN THE CLUB', 'COLLABORATE WITH US', 'ASK A QUESTION'] as ContactIntent[]).map((p) => (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {(['COLLABORATE WITH US', 'ASK A QUESTION'] as ContactIntent[]).map((p) => (
                     <button
                       key={p}
                       type="button"
@@ -192,9 +191,7 @@ export const ContactPage: React.FC<ContactPageProps> = ({ onRouteChange }) => {
                         htmlFor="contact-major"
                         className="block font-dosis text-xs uppercase tracking-[0.2em] text-[#0A0A09] font-bold"
                       >
-                        {intent === 'JOIN THE CLUB'
-                          ? 'Major & Year'
-                          : intent === 'COLLABORATE WITH US'
+                        {intent === 'COLLABORATE WITH US'
                           ? 'Department / Organization / Lab'
                           : 'Role / Major / Affiliation'}
                       </label>
@@ -214,9 +211,7 @@ export const ContactPage: React.FC<ContactPageProps> = ({ onRouteChange }) => {
                         htmlFor="contact-message"
                         className="block font-dosis text-xs uppercase tracking-[0.2em] text-[#0A0A09] font-bold"
                       >
-                        {intent === 'JOIN THE CLUB'
-                          ? 'What would you like to build or learn?'
-                          : intent === 'COLLABORATE WITH US'
+                        {intent === 'COLLABORATE WITH US'
                           ? 'Tell us about the project or collaboration idea'
                           : 'Your Question'}
                       </label>
@@ -225,9 +220,7 @@ export const ContactPage: React.FC<ContactPageProps> = ({ onRouteChange }) => {
                         rows={4}
                         required
                         placeholder={
-                          intent === 'JOIN THE CLUB'
-                            ? 'Share your interests, projects you want to make, or skills you want to practice...'
-                            : intent === 'COLLABORATE WITH US'
+                          intent === 'COLLABORATE WITH US'
                             ? 'Outline the idea, event, or cross-discipline initiative you have in mind...'
                             : 'How can we help? Ask about meeting times, lab access, equipment, etc.'
                         }
