@@ -6,7 +6,7 @@
 import React, { useState } from 'react';
 import { Container } from '../components/primitives/Container.tsx';
 import { SectionLabel } from '../components/primitives/SectionLabel.tsx';
-import { PrimaryButton } from '../components/primitives/Button.tsx';
+import { PrimaryButton, NexusFilterButton } from '../components/primitives/Button.tsx';
 import { TeamCard } from '../components/primitives/TeamCard.tsx';
 import { NexusIcon } from '../components/brand/NexusLogo.tsx';
 import { RevealSection, RevealText } from '../components/motion/MotionPrimitives.tsx';
@@ -81,18 +81,12 @@ export const TeamPage: React.FC<TeamPageProps> = ({ onRouteChange }) => {
             <div className="flex flex-wrap items-center gap-2">
               <span className="font-dosis text-xs font-bold text-[#66615A] tracking-[0.2em] mr-2">GROUP:</span>
               {groups.map((group) => (
-                <button
+                <NexusFilterButton
                   key={group}
-                  type="button"
+                  label={group}
+                  active={activeGroup === group}
                   onClick={() => setActiveGroup(group)}
-                  className={`px-3.5 py-1.5 font-dosis text-xs uppercase tracking-[0.2em] transition-all duration-200 cursor-pointer ${
-                    activeGroup === group
-                      ? 'bg-[#0A0A09] text-[#F3EEE5] font-bold shadow-xs'
-                      : 'bg-[#F3EEE5] text-[#0A0A09] font-semibold border border-[rgba(10,10,9,0.15)] hover:border-[#0A0A09]'
-                  }`}
-                >
-                  {group}
-                </button>
+                />
               ))}
             </div>
             <span className="font-dosis text-xs tracking-[0.18em] text-[#66615A] font-semibold">

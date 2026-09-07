@@ -6,7 +6,7 @@
 import React, { useState } from 'react';
 import { Container } from '../components/primitives/Container.tsx';
 import { SectionLabel } from '../components/primitives/SectionLabel.tsx';
-import { PrimaryButton, SecondaryButton } from '../components/primitives/Button.tsx';
+import { PrimaryButton, SecondaryButton, NexusFilterButton, NexusIconButton } from '../components/primitives/Button.tsx';
 import { ImageReveal } from '../components/primitives/ImageReveal.tsx';
 import { GalleryTile } from '../components/primitives/GalleryTile.tsx';
 import { NexusIcon } from '../components/brand/NexusLogo.tsx';
@@ -73,18 +73,12 @@ export const GalleryPage: React.FC<GalleryPageProps> = ({ onRouteChange }) => {
             <div className="flex flex-wrap items-center gap-2">
               <span className="font-dosis text-xs font-bold text-[#66615A] tracking-[0.2em] mr-2">CATEGORY:</span>
               {categories.map((cat) => (
-                <button
+                <NexusFilterButton
                   key={cat}
-                  type="button"
+                  label={cat}
+                  active={categoryFilter === cat}
                   onClick={() => setCategoryFilter(cat)}
-                  className={`px-3 py-1.5 font-dosis text-xs uppercase tracking-[0.2em] transition-all duration-200 cursor-pointer ${
-                    categoryFilter === cat
-                      ? 'bg-[#0A0A09] text-[#F3EEE5] font-bold shadow-xs'
-                      : 'bg-[#F3EEE5] text-[#0A0A09] font-semibold border border-[rgba(10,10,9,0.15)] hover:border-[#0A0A09]'
-                  }`}
-                >
-                  {cat}
-                </button>
+                />
               ))}
             </div>
             <span className="font-dosis text-xs tracking-[0.18em] text-[#66615A] font-semibold">
@@ -144,14 +138,11 @@ export const GalleryPage: React.FC<GalleryPageProps> = ({ onRouteChange }) => {
                   STUDIO ARCHIVE // {activeItem.category}
                 </span>
               </div>
-              <button
-                type="button"
+              <NexusIconButton
                 onClick={() => setActiveItem(null)}
-                className="p-1.5 text-[#0A0A09] hover:text-[#EF5A2A] border border-[rgba(10,10,9,0.2)] cursor-pointer"
-                aria-label="Close lightbox"
-              >
-                <X className="w-5 h-5" />
-              </button>
+                ariaLabel="Close lightbox"
+                icon={<X className="w-5 h-5" />}
+              />
             </div>
 
             {/* Main Visual */}

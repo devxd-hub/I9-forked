@@ -46,7 +46,7 @@ export const TeamPreview: React.FC<TeamPreviewProps> = ({ onRouteChange }) => {
             </p>
           </div>
           <TextLink
-            label="ALL MEMBERS & SQUADS →"
+            label="ALL MEMBERS & SQUADS"
             onClick={() => onRouteChange('/team')}
           />
         </div>
@@ -60,7 +60,7 @@ export const TeamPreview: React.FC<TeamPreviewProps> = ({ onRouteChange }) => {
 
         <div className="mt-14 text-center">
           <PrimaryButton
-            label="MEET THE FULL TEAM →"
+            label="MEET THE FULL TEAM"
             onClick={() => onRouteChange('/team')}
             magnetic={true}
           />

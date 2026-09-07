@@ -47,7 +47,7 @@ export const GalleryPreview: React.FC<GalleryPreviewProps> = ({ onRouteChange })
             </p>
           </div>
           <TextLink
-            label="FULL ARCHIVE →"
+            label="FULL ARCHIVE"
             onClick={() => onRouteChange('/gallery')}
           />
         </div>
@@ -91,10 +91,10 @@ export const GalleryPreview: React.FC<GalleryPreviewProps> = ({ onRouteChange })
           </div>
         </div>
 
-        {/* CTA: VIEW THE GALLERY → */}
+        {/* CTA: VIEW THE GALLERY */}
         <div className="mt-14 text-center">
           <PrimaryButton
-            label="VIEW THE GALLERY →"
+            label="VIEW THE GALLERY"
             onClick={() => onRouteChange('/gallery')}
             magnetic={true}
           />

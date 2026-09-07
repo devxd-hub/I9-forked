@@ -51,7 +51,7 @@ export const AboutPreview: React.FC<AboutPreviewProps> = ({ onRouteChange }) => 
 
             <div className="pt-2">
               <PrimaryButton
-                label="ABOUT NEXUS →"
+                label="ABOUT NEXUS"
                 onClick={() => onRouteChange('/about')}
               />
             </div>

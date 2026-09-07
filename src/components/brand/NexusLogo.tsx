@@ -189,7 +189,7 @@ export const NexusWordmark: React.FC<NexusWordmarkProps> = ({
     lg: 'text-xl md:text-2xl tracking-[0.2em]',
     xl: 'text-3xl md:text-4xl tracking-[0.22em]',
     '2xl': 'text-5xl md:text-6xl tracking-[0.24em]',
-    hero: 'text-6xl sm:text-7xl md:text-8xl lg:text-9xl tracking-[0.22em]',
+    hero: 'text-4xl xs:text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-[6.5rem] tracking-[0.15em] sm:tracking-[0.2em] md:tracking-[0.22em]',
   }[size];
 
   const textColor = inverted ? 'text-[#F3EEE5]' : 'text-[#0A0A09]';

@@ -65,15 +65,16 @@ export const FinalCTA: React.FC<FinalCTAProps> = ({ onRouteChange }) => {
 
           <div className="pt-4 flex flex-wrap items-center justify-center gap-4">
             <PrimaryButton
-              label="GET IN TOUCH →"
+              label="GET IN TOUCH"
               onClick={() => onRouteChange('/contact')}
               magnetic={true}
               className="bg-[#EF5A2A] border-[#EF5A2A] text-white hover:bg-white hover:text-[#0A0A09] hover:border-white"
             />
             <SecondaryButton
-              label="EXPLORE PROJECTS →"
+              label="EXPLORE PROJECTS"
               onClick={() => onRouteChange('/projects')}
               magnetic={true}
+              showArrow={true}
               className="text-[#F3EEE5] border-[rgba(243,238,229,0.3)] hover:bg-[rgba(243,238,229,0.1)] hover:border-[#F3EEE5]"
             />
           </div>

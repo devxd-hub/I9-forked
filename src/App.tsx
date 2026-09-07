@@ -30,6 +30,7 @@ export default function App() {
 
   const [currentRoute, setCurrentRoute] = useState<AppRoute>(getInitialRoute);
   const [showPreloader, setShowPreloader] = useState(true);
+  const [isHandoffStarted, setIsHandoffStarted] = useState(false);
 
   useEffect(() => {
     const handlePopState = () => {
@@ -70,9 +71,15 @@ export default function App() {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#F3EEE5] text-[#0A0A09]">
-      {/* Cinematic Brand Preloader: "WHERE IDEAS CONVERGE" */}
+      {/* Cinematic Brand Preloader: "THE X IS THE NEXUS" */}
       {showPreloader && (
-        <CinematicPreloader onComplete={() => setShowPreloader(false)} />
+        <CinematicPreloader
+          onHandoffStart={() => setIsHandoffStarted(true)}
+          onComplete={() => {
+            setShowPreloader(false);
+            setIsHandoffStarted(true);
+          }}
+        />
       )}
 
       {/* Contextual Cursor for fine-pointer desktop interactions */}
@@ -81,7 +88,7 @@ export default function App() {
       {/* Persistent Global Responsive Navbar */}
       <Navbar currentRoute={currentRoute} onRouteChange={handleRouteChange} />
 
-      {/* Primary Route View with Editorial Transition */}
+      {/* Primary Route View */}
       <main className="flex-1 w-full overflow-hidden flex flex-col">
         <AnimatePresence mode="wait" initial={false}>
           <motion.div

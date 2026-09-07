@@ -45,7 +45,7 @@ export const ProjectPreview: React.FC<ProjectPreviewProps> = ({ onRouteChange })
             </RevealText>
           </div>
           <TextLink
-            label="ALL PROJECTS ARCHIVE →"
+            label="ALL PROJECTS ARCHIVE"
             onClick={() => onRouteChange('/projects')}
           />
         </div>
@@ -66,7 +66,7 @@ export const ProjectPreview: React.FC<ProjectPreviewProps> = ({ onRouteChange })
 
         <div className="mt-14 text-center">
           <PrimaryButton
-            label="EXPLORE FULL PROJECT ARCHIVE →"
+            label="EXPLORE FULL PROJECT ARCHIVE"
             onClick={() => onRouteChange('/projects')}
             magnetic={true}
           />

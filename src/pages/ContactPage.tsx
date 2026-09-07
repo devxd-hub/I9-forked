@@ -90,18 +90,26 @@ export const ContactPage: React.FC<ContactPageProps> = ({ onRouteChange }) => {
                         setIntent(p);
                         setSubmitted(false);
                       }}
-                      className={`p-4 text-xs font-dosis font-bold tracking-[0.2em] uppercase transition-all duration-200 text-left border cursor-pointer ${
+                      className={`relative p-4 text-xs font-dosis font-bold tracking-[0.2em] uppercase transition-all duration-250 ease-[cubic-bezier(0.16,1,0.3,1)] text-left rounded-[2px] cursor-pointer select-none group overflow-hidden ${
                         intent === p
-                          ? 'bg-[#0A0A09] text-[#F3EEE5] border-[#0A0A09] shadow-xs'
-                          : 'bg-[#FAF6F0] text-[#0A0A09] border-[rgba(10,10,9,0.15)] hover:border-[#0A0A09]'
-                      }`}
+                          ? 'bg-[#0A0A09] text-[#F3EEE5] border border-[#0A0A09] shadow-xs'
+                          : 'bg-[#FAF6F0] text-[#0A0A09] border border-[rgba(10,10,9,0.2)] hover:border-[#0A0A09] hover:-translate-y-0.5 hover:shadow-xs'
+                      } active:scale-[0.985] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#EF5A2A]`}
                     >
-                      <div className="flex items-center justify-between mb-1.5">
-                        <span className="text-[10px] text-[#EF5A2A]">
-                          {intent === p ? '● ACTIVE' : '○'}
+                      {/* Top-Right Corner Reticle on Hover */}
+                      <span
+                        className="absolute top-0 right-0 w-2 h-2 border-t-2 border-r-2 border-[#EF5A2A] opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none"
+                        aria-hidden="true"
+                      />
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-[10px] tracking-widest text-[#EF5A2A] flex items-center gap-1.5 font-bold">
+                          <span className={`w-1.5 h-1.5 rounded-full ${intent === p ? 'bg-[#EF5A2A]' : 'border border-[#EF5A2A]'}`} />
+                          {intent === p ? 'ACTIVE' : 'SELECT'}
                         </span>
                       </div>
-                      {p}
+                      <span className="transition-transform duration-250 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-0.5 block">
+                        {p}
+                      </span>
                     </button>
                   ))}
                 </div>
@@ -233,7 +241,7 @@ export const ContactPage: React.FC<ContactPageProps> = ({ onRouteChange }) => {
                     <div className="pt-2">
                       <PrimaryButton
                         type="submit"
-                        label={`SUBMIT ${intent} →`}
+                        label={`SUBMIT ${intent}`}
                         className="w-full sm:w-auto"
                       />
                     </div>

@@ -6,7 +6,7 @@
 import React, { useState } from 'react';
 import { Container } from '../components/primitives/Container.tsx';
 import { SectionLabel } from '../components/primitives/SectionLabel.tsx';
-import { PrimaryButton, SecondaryButton } from '../components/primitives/Button.tsx';
+import { PrimaryButton, SecondaryButton, NexusFilterButton, NexusIconButton } from '../components/primitives/Button.tsx';
 import { ImageReveal } from '../components/primitives/ImageReveal.tsx';
 import { ProjectCard } from '../components/primitives/ProjectCard.tsx';
 import { NexusIcon } from '../components/brand/NexusLogo.tsx';
@@ -78,18 +78,12 @@ export const ProjectsPage: React.FC<ProjectsPageProps> = ({ onRouteChange }) => 
             <div className="flex flex-wrap items-center gap-2">
               <span className="font-dosis text-xs font-bold text-[#66615A] tracking-[0.2em] mr-2">DISCIPLINE:</span>
               {disciplinesList.map((disc) => (
-                <button
+                <NexusFilterButton
                   key={disc}
-                  type="button"
+                  label={disc}
+                  active={filterDiscipline === disc}
                   onClick={() => setFilterDiscipline(disc)}
-                  className={`px-3 py-1.5 font-dosis text-xs uppercase tracking-[0.2em] transition-all duration-200 cursor-pointer ${
-                    filterDiscipline === disc
-                      ? 'bg-[#0A0A09] text-[#F3EEE5] font-bold shadow-xs'
-                      : 'bg-[#F3EEE5] text-[#0A0A09] font-semibold border border-[rgba(10,10,9,0.15)] hover:border-[#0A0A09]'
-                  }`}
-                >
-                  {disc}
-                </button>
+                />
               ))}
             </div>
 
@@ -126,14 +120,12 @@ export const ProjectsPage: React.FC<ProjectsPageProps> = ({ onRouteChange }) => 
           className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#0A0A09]/80 backdrop-blur-xs"
         >
           <div className="bg-[#FAF6F0] border border-[#0A0A09] max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 sm:p-10 relative shadow-2xl space-y-6">
-            <button
-              type="button"
+            <NexusIconButton
               onClick={() => setSelectedProject(null)}
-              className="absolute top-6 right-6 p-2 text-[#0A0A09] hover:text-[#EF5A2A] border border-[rgba(10,10,9,0.2)] focus:outline-none cursor-pointer"
-              aria-label="Close Project Modal"
-            >
-              <X className="w-5 h-5" />
-            </button>
+              className="absolute top-6 right-6"
+              ariaLabel="Close Project Modal"
+              icon={<X className="w-5 h-5" />}
+            />
 
             <div className="space-y-2">
               <div className="flex items-center gap-3">

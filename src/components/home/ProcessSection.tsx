@@ -3,17 +3,23 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React from 'react';
+import React, { useState, useRef } from 'react';
 import { Container } from '../primitives/Container.tsx';
 import { SectionLabel } from '../primitives/SectionLabel.tsx';
 import { NexusIcon } from '../brand/NexusLogo.tsx';
-import { RevealSection, RevealText } from '../motion/MotionPrimitives.tsx';
+import { RevealSection } from '../motion/MotionPrimitives.tsx';
+import { ProcessLoopCard } from './process/ProcessLoopCard.tsx';
+import { TextLink } from '../primitives/Button.tsx';
+import { motion, useReducedMotion, AnimatePresence } from 'motion/react';
+import { RotateCcw } from 'lucide-react';
 
 interface Stage {
   number: string;
   name: string;
   copy: string;
   tag: string;
+  shortTag: string;
+  pill: string;
 }
 
 const STAGES: Stage[] = [
@@ -22,108 +28,321 @@ const STAGES: Stage[] = [
     name: 'IDEATE',
     copy: 'Bring the question, idea, problem or experiment.',
     tag: 'EXPLORATION & INQUIRY',
+    shortTag: 'INQUIRY',
+    pill: 'IDEA',
   },
   {
     number: '02',
     name: 'ASSEMBLE',
     copy: 'Find students whose skills and perspective complement yours.',
     tag: 'TEAM & DISCIPLINE MATCH',
+    shortTag: 'PEOPLE',
+    pill: 'PEOPLE',
   },
   {
     number: '03',
     name: 'BUILD',
     copy: 'Prototype, test, break, redesign and make.',
     tag: 'PROTOTYPE & ITERATION',
+    shortTag: 'ITERATION',
+    pill: 'BUILD',
   },
   {
     number: '04',
     name: 'SHARE',
     copy: 'Present the result, document the process and let others build on it.',
     tag: 'EXHIBIT & OPEN KNOWLEDGE',
+    shortTag: 'KNOWLEDGE',
+    pill: 'SHARE',
   },
 ];
 
 /**
- * HOW NEXUS WORKS
- * Heading: FROM IDEA TO SOMETHING REAL.
- * Four stages as editorial rows (NOT a SaaS feature grid).
+ * THE NEXUS LOOP: FROM IDEA TO SOMETHING REAL.
+ * A living, continuous process diagram connecting four stages:
+ * IDEA → PEOPLE → BUILD → KNOWLEDGE ↘ back to IDEA.
  */
 export const ProcessSection: React.FC = () => {
+  const [activeStage, setActiveStage] = useState<number>(0);
+  const [clickedStage, setClickedStage] = useState<number | null>(null);
+  const shouldReduceMotion = useReducedMotion();
+  const listRef = useRef<HTMLDivElement>(null);
+
+  const handleStageClick = (idx: number) => {
+    setActiveStage(idx);
+    setClickedStage(idx);
+    setTimeout(() => setClickedStage(null), 240);
+  };
+
   return (
     <RevealSection
       id="nexus-how-it-works"
-      className="w-full py-24 md:py-36 bg-[#EBE5DB] border-b border-[rgba(10,10,9,0.12)]"
+      className="relative w-full py-24 md:py-36 bg-[#EBE5DB] border-b border-[rgba(10,10,9,0.12)] overflow-hidden"
     >
-      <Container>
-        <div className="max-w-4xl mb-16 space-y-4">
-          <SectionLabel number="02" label="METHOD & PROGRESSION" />
-          <RevealText
-            as="h2"
-            staggerMs={45}
-            className="font-fraunces font-bold text-4xl sm:text-5xl lg:text-6xl text-[#0A0A09] leading-[1.08] tracking-tight uppercase"
-          >
-            FROM IDEA TO SOMETHING REAL.
-          </RevealText>
-          <p className="font-bitter text-[#66615A] max-w-xl text-lg pt-2 leading-relaxed">
+      {/* Background Architectural Watermark Curve (echoes homepage trajectory line) */}
+      <svg
+        className="absolute inset-0 w-full h-full pointer-events-none z-0"
+        viewBox="0 0 1440 900"
+        fill="none"
+        preserveAspectRatio="none"
+        xmlns="http://www.w3.org/2000/svg"
+        aria-hidden="true"
+      >
+        <path
+          d="M -100 240 C 320 180, 560 620, 940 450 C 1220 320, 1420 680, 1600 580"
+          stroke="rgba(239, 90, 42, 0.038)"
+          strokeWidth="2.5"
+          strokeDasharray="6 6"
+        />
+        <path
+          d="M -80 720 C 380 780, 680 320, 1100 520 C 1320 620, 1500 420, 1620 400"
+          stroke="rgba(10, 10, 9, 0.025)"
+          strokeWidth="1.5"
+        />
+      </svg>
+
+      <Container className="relative z-10">
+        {/* Section Header with Staggered Entrance */}
+        <div className="max-w-4xl mb-14 sm:mb-18 space-y-4">
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <SectionLabel number="02" label="METHOD & PROGRESSION" />
+            
+            {/* The Loop Concept Pill */}
+            <div className="hidden sm:inline-flex items-center gap-2 px-2.5 py-1 border border-[rgba(10,10,9,0.14)] bg-[#F3EEE5]/60 text-xs font-dosis tracking-[0.18em] text-[#66615A] uppercase select-none">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#EF5A2A]" />
+              <span>THE NEXUS LOOP</span>
+              <span className="text-[#0A0A09]/40">·</span>
+              <span className="text-[#0A0A09]/75 font-semibold">IDEA → PEOPLE → BUILD → SHARE ↺</span>
+            </div>
+          </div>
+
+          {/* Heading with restrained typographic accent */}
+          <h2 className="font-fraunces font-bold text-4xl sm:text-5xl lg:text-6xl text-[#0A0A09] leading-[1.08] tracking-tight uppercase">
+            <span>FROM IDEA TO SOMETHING </span>
+            <span className="text-[#0A0A09]">REAL</span>
+            <span className="text-[#EF5A2A]">.</span>
+          </h2>
+
+          <p className="font-bitter text-[#66615A] max-w-2xl text-lg pt-1 leading-relaxed">
             A continuous loop from raw curiosity to functional, shared student work.
           </p>
         </div>
 
-        {/* Editorial Interactive Rows */}
-        <div className="divide-y divide-[rgba(10,10,9,0.14)] border-t border-b border-[rgba(10,10,9,0.14)]">
-          {STAGES.map((stage) => (
+        {/* ========================================================================= */}
+        {/* THE PROCESS COMPOSITION: STAGES TIMELINE + CREATIVE FLOATING PANEL       */}
+        {/* ========================================================================= */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 xl:gap-12 items-start">
+          {/* Left Column: Interactive Stages Spine & Rows (7 Columns) */}
+          <div
+            ref={listRef}
+            className="lg:col-span-7 xl:col-span-7 relative"
+            role="tablist"
+            aria-label="NEXUS Process Stages"
+          >
+            {/* Background Spine Guideline (Desktop) */}
             <div
-              key={stage.number}
-              tabIndex={0}
-              role="region"
-              aria-label={`Process stage ${stage.number}: ${stage.name}`}
-              className="relative py-10 sm:py-12 px-5 sm:px-8 -mx-5 sm:-mx-8 group transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] hover:bg-[#E2DBCF]/80 focus:outline-none focus-visible:bg-[#E2DBCF] cursor-default select-none"
-            >
-              {/* Left accent indicator */}
-              <div
-                className="absolute left-0 top-0 bottom-0 w-0 bg-[#EF5A2A] transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:w-1 group-focus-visible:w-1"
+              className="hidden sm:block absolute left-3 md:left-4 top-10 bottom-12 w-[1px] bg-[rgba(10,10,9,0.12)] pointer-events-none"
+              aria-hidden="true"
+            />
+
+            {/* Active Process Signal traveling down the spine */}
+            {!shouldReduceMotion && (
+              <motion.div
+                className="hidden sm:block absolute left-[11px] md:left-[15px] w-1.5 h-1.5 rounded-full bg-[#EF5A2A] pointer-events-none z-20 shadow-[0_0_8px_rgba(239,90,42,0.8)]"
+                animate={{
+                  top: ['8%', '34%', '62%', '88%', '8%'],
+                }}
+                transition={{
+                  duration: 11,
+                  repeat: Infinity,
+                  ease: 'easeInOut',
+                }}
                 aria-hidden="true"
               />
+            )}
 
-              <div className="grid grid-cols-4 md:grid-cols-12 gap-4 md:gap-8 items-baseline">
-                {/* Stage Number (changes color from muted to vivid orange on hover) */}
-                <div className="col-span-1 md:col-span-2">
-                  <span className="font-dosis text-3xl sm:text-4xl md:text-5xl font-bold text-[#0A0A09]/35 group-hover:text-[#EF5A2A] group-focus-visible:text-[#EF5A2A] tracking-wider transition-colors duration-400 ease-[cubic-bezier(0.16,1,0.3,1)]">
-                    {stage.number}
-                  </span>
-                </div>
+            {/* Editorial Stages Rows */}
+            <div className="divide-y divide-[rgba(10,10,9,0.14)] border-t border-b border-[rgba(10,10,9,0.14)]">
+              {STAGES.map((stage, idx) => {
+                const isActive = activeStage === idx;
+                const isClicked = clickedStage === idx;
 
-                {/* Stage Name (shifts translateX(4px) on hover) */}
-                <div className="col-span-3 md:col-span-3">
-                  <h3 className="font-bitter text-2xl sm:text-3xl font-bold text-[#0A0A09] tracking-wide uppercase flex items-center gap-3 transition-transform duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-1 group-focus-visible:translate-x-1">
-                    <span>{stage.name}</span>
-                    <NexusIcon
-                      size="xs"
-                      className="opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 transition-opacity duration-300 text-[#EF5A2A]"
+                return (
+                  <div
+                    key={stage.number}
+                    id={`process-stage-${stage.number}`}
+                    role="tab"
+                    aria-selected={isActive}
+                    tabIndex={0}
+                    onMouseEnter={() => setActiveStage(idx)}
+                    onFocus={() => setActiveStage(idx)}
+                    onClick={() => handleStageClick(idx)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        handleStageClick(idx);
+                      }
+                    }}
+                    className={`relative py-8 sm:py-10 md:py-11 px-3 sm:px-6 md:pl-10 group transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] focus:outline-none cursor-pointer select-none ${
+                      isActive
+                        ? 'bg-[#E5DEC9]/50 sm:translate-x-1.5'
+                        : 'hover:bg-[#E5DEC9]/30'
+                    } ${isClicked ? 'scale-[0.99]' : 'scale-100'}`}
+                  >
+                    {/* Process Spine Node Marker */}
+                    <div
+                      className="hidden sm:flex absolute left-2 md:left-3 top-10 -translate-x-1/2 items-center justify-center pointer-events-none z-10"
+                      aria-hidden="true"
+                    >
+                      <div
+                        className={`w-3 h-3 rounded-full border transition-all duration-300 ${
+                          isActive
+                            ? 'border-[#EF5A2A] bg-[#EF5A2A] shadow-[0_0_0_3px_rgba(239,90,42,0.2)]'
+                            : 'border-[rgba(10,10,9,0.3)] bg-[#EBE5DB] group-hover:border-[#0A0A09]'
+                        }`}
+                      />
+                    </div>
+
+                    {/* Active Left Border Accent */}
+                    <div
+                      className={`absolute left-0 top-0 bottom-0 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+                        isActive ? 'w-1 bg-[#EF5A2A]' : 'w-0 bg-transparent'
+                      }`}
+                      aria-hidden="true"
                     />
-                  </h3>
-                  <span className="font-dosis text-[11px] font-semibold uppercase tracking-[0.2em] text-[#66615A] group-hover:text-[#0A0A09] mt-1.5 block transition-colors duration-300">
-                    {stage.tag}
-                  </span>
-                </div>
 
-                {/* Stage Description (increases opacity and contrast on hover) */}
-                <div className="col-span-4 md:col-span-7 md:pl-6">
-                  <p className="font-bitter text-lg sm:text-xl text-[#66615A] group-hover:text-[#0A0A09] group-focus-visible:text-[#0A0A09] font-normal leading-relaxed opacity-80 group-hover:opacity-100 group-focus-visible:opacity-100 transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)]">
-                    {stage.copy}
-                  </p>
-                </div>
+                    {/* Content Grid */}
+                    <div className="grid grid-cols-4 md:grid-cols-12 gap-3 md:gap-6 items-baseline">
+                      {/* Stage Number */}
+                      <div className="col-span-1 md:col-span-2 flex items-baseline gap-2">
+                        <span
+                          className={`font-dosis text-3xl sm:text-4xl md:text-5xl font-bold tracking-wider transition-all duration-300 ${
+                            isActive
+                              ? 'text-[#0A0A09]'
+                              : 'text-[#0A0A09]/30 group-hover:text-[#0A0A09]/60'
+                          }`}
+                        >
+                          {stage.number}
+                        </span>
+                        {isActive && (
+                          <motion.span
+                            initial={{ scale: 0 }}
+                            animate={{ scale: 1 }}
+                            className="w-1.5 h-1.5 rounded-full bg-[#EF5A2A] shrink-0 self-center"
+                            aria-hidden="true"
+                          />
+                        )}
+                      </div>
+
+                      {/* Stage Name & Tag */}
+                      <div className="col-span-3 md:col-span-4">
+                        <h3
+                          className={`font-bitter text-2xl sm:text-3xl font-bold uppercase tracking-wide flex items-center gap-2.5 transition-all duration-300 ${
+                            isActive
+                              ? 'text-[#0A0A09] translate-x-1'
+                              : 'text-[#0A0A09]/80 group-hover:text-[#0A0A09]'
+                          }`}
+                        >
+                          <span>{stage.name}</span>
+                          <NexusIcon
+                            size="xs"
+                            className={`transition-opacity duration-300 text-[#EF5A2A] ${
+                              isActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-60'
+                            }`}
+                          />
+                        </h3>
+                        <span
+                          className={`font-dosis text-[11px] font-semibold uppercase tracking-[0.2em] mt-1.5 block transition-colors duration-300 ${
+                            isActive ? 'text-[#EF5A2A]' : 'text-[#66615A]'
+                          }`}
+                        >
+                          {stage.tag}
+                        </span>
+                      </div>
+
+                      {/* Stage Description */}
+                      <div className="col-span-4 md:col-span-6 md:pl-2">
+                        <p
+                          className={`font-bitter text-base sm:text-lg leading-relaxed transition-all duration-300 ${
+                            isActive
+                              ? 'text-[#0A0A09] opacity-100 font-medium'
+                              : 'text-[#66615A] opacity-80 group-hover:opacity-95'
+                          }`}
+                        >
+                          {stage.copy}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Mobile Inline Micro-Visual Card (Renders smoothly beneath active stage on screens < lg) */}
+                    <div className="lg:hidden mt-5">
+                      <AnimatePresence>
+                        {isActive && (
+                          <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            exit={{ opacity: 0, height: 0 }}
+                            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                            className="overflow-hidden"
+                          >
+                            <ProcessLoopCard
+                              activeIndex={activeStage}
+                              onSelectStage={setActiveStage}
+                              isInlineMobile={true}
+                              className="w-full mt-2"
+                            />
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+
+                    {/* Subtle Progress Bar on Active Row */}
+                    <div
+                      className={`mt-4 h-[1.5px] transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+                        isActive ? 'w-full bg-[#EF5A2A]' : 'w-0 bg-transparent'
+                      }`}
+                      aria-hidden="true"
+                    />
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Continuous Loop Return Arc below Stage 04 */}
+            <div className="pt-6 pb-2 flex items-center justify-between text-xs font-dosis tracking-[0.2em] text-[#66615A] uppercase border-b border-[rgba(10,10,9,0.1)]">
+              <div className="flex items-center gap-2">
+                <RotateCcw className="w-3.5 h-3.5 text-[#EF5A2A]" aria-hidden="true" />
+                <span className="hidden sm:inline">CONTINUOUS LOOP: SHARE (04) RE-SEEDS NEW IDEA (01)</span>
+                <span className="sm:hidden">CONTINUOUS LOOP</span>
               </div>
-
-              {/* Expanding Orange Rule */}
-              <div
-                className="mt-6 h-[2px] w-0 bg-[#EF5A2A] transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:w-full group-focus-visible:w-full"
-                aria-hidden="true"
+              <TextLink
+                label="CYCLE LOOP"
+                onClick={() => setActiveStage((prev) => (prev + 1) % 4)}
+                showArrow={true}
+                arrowType="right"
               />
             </div>
-          ))}
+          </div>
+
+          {/* Right Column: Floating Creative Process Card (Desktop: Sticky 5 Columns) */}
+          <div className="hidden lg:block lg:col-span-5 xl:col-span-5 sticky top-28">
+            <ProcessLoopCard
+              activeIndex={activeStage}
+              onSelectStage={setActiveStage}
+              className="w-full"
+            />
+
+            {/* Supporting Editorial Caption beneath the Card */}
+            <div className="mt-4 px-2 flex items-start gap-3">
+              <div className="w-1.5 h-1.5 rounded-full bg-[#EF5A2A] mt-1 shrink-0" />
+              <p className="font-bitter text-xs text-[#66615A] leading-relaxed">
+                Every completed NEXUS project documents its source code, design decisions, and prototype iterations—providing a launching pad for the next cohort.
+              </p>
+            </div>
+          </div>
         </div>
       </Container>
     </RevealSection>
   );
 };
+

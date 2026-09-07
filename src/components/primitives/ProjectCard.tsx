@@ -141,13 +141,17 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
         </div>
       </div>
 
-      {/* Footer with View Project and Animated Arrow (shifts 4px on hover) */}
+      {/* Footer with View Project and Animated Arrow (shifts outward on hover) */}
       <div className="px-6 sm:px-7 pb-6 pt-3 mt-2 border-t border-[rgba(10,10,9,0.06)] flex items-center justify-between">
-        <span className="font-dosis text-xs font-bold uppercase tracking-[0.2em] text-[#0A0A09] group-hover:text-[#EF5A2A] transition-colors duration-300">
+        <span className="relative font-dosis text-xs font-bold uppercase tracking-[0.2em] text-[#0A0A09] group-hover:text-[#0A0A09] transition-colors duration-250">
           VIEW PROJECT
+          <span
+            className="absolute -bottom-1 left-0 w-full h-[1.5px] bg-[#EF5A2A] origin-left scale-x-0 transition-transform duration-250 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-x-100 pointer-events-none"
+            aria-hidden="true"
+          />
         </span>
-        <div className="flex items-center gap-1.5 text-[#0A0A09] group-hover:text-[#EF5A2A] transition-colors duration-300">
-          <ArrowRight className="w-4 h-4 transition-transform duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-1" />
+        <div className="flex items-center gap-1.5 text-[#EF5A2A] transition-colors duration-250">
+          <ArrowRight className="w-4 h-4 transition-transform duration-250 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-1.5" />
         </div>
       </div>
 
