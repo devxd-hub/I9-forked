@@ -1,0 +1,164 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --nexus-warm-bg: #F3EEE5;
+    --nexus-deep-black: #0A0A09;
+    --nexus-secondary-dark: #151311;
+    --nexus-orange: #EF5A2A;
+    --nexus-muted-text: #66615A;
+    --nexus-light-line: rgba(10, 10, 9, 0.12);
+    --ease-nexus-primary: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-nexus-mechanical: cubic-bezier(0.65, 0, 0.35, 1);
+  }
+
+  body {
+    background-color: var(--nexus-warm-bg);
+    color: var(--nexus-deep-black);
+    font-family: 'Bitter', Georgia, serif;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+/* 1. Core Typography Families */
+.font-fraunces {
+  font-family: 'Fraunces', Georgia, serif;
+  font-feature-settings: "liga" 1, "calt" 1;
+}
+
+.font-bitter {
+  font-family: 'Bitter', Georgia, serif;
+}
+
+.font-dosis {
+  font-family: 'Dosis', -apple-system, system-ui, sans-serif;
+  letter-spacing: 0.12em;
+}
+
+/* 2. Editorial Typographic Hierarchy Tokens */
+.nexus-display-xl {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: clamp(2.75rem, 6.5vw + 1rem, 6rem);
+  line-height: 1.05;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+}
+
+.nexus-display-lg {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: clamp(2.25rem, 4.5vw + 1rem, 4.25rem);
+  line-height: 1.1;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.nexus-display-sm {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: clamp(1.75rem, 3vw + 0.5rem, 2.75rem);
+  line-height: 1.15;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
+
+.nexus-heading-xl {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: clamp(1.75rem, 3vw + 0.5rem, 2.5rem);
+  line-height: 1.2;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
+
+.nexus-heading-lg {
+  font-family: 'Bitter', Georgia, serif;
+  font-size: clamp(1.35rem, 2vw + 0.5rem, 1.85rem);
+  line-height: 1.25;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.nexus-body {
+  font-family: 'Bitter', Georgia, serif;
+  font-size: 1.0625rem;
+  line-height: 1.75;
+  color: #66615A;
+}
+
+.nexus-body-small {
+  font-family: 'Bitter', Georgia, serif;
+  font-size: 0.9375rem;
+  line-height: 1.65;
+  color: #66615A;
+}
+
+.nexus-label {
+  font-family: 'Dosis', -apple-system, system-ui, sans-serif;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #0A0A09;
+}
+
+.nexus-caption {
+  font-family: 'Dosis', -apple-system, system-ui, sans-serif;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: #66615A;
+  letter-spacing: 0.12em;
+}
+
+/* 3. Microinteractions */
+.nav-link-anim {
+  position: relative;
+}
+
+.nav-link-anim::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: #EF5A2A;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.nav-link-anim:hover::after {
+  transform: scaleX(1);
+}
+
+.nav-link-active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: #EF5A2A;
+  transform: scaleX(1);
+}
+
+/* 4. Motion Easing Utilities */
+.ease-nexus {
+  transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ease-nexus-mechanical {
+  transition-timing-function: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+/* 5. Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

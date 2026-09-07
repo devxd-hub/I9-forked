@@ -1,0 +1,22 @@
+<svg viewBox="0 0 1000 1000" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Left Half -->
+  <path
+    d="M 125 78 H 325 L 405 640 L 25 975 M 405 640 L 125 78"
+    stroke="#EF5A2A"
+    stroke-width="116"
+    stroke-linejoin="miter"
+    stroke-miterlimit="6"
+    stroke-linecap="square"
+  />
+  <!-- Right Half (180 deg rotated) -->
+  <g transform="rotate(180 500 500)">
+    <path
+      d="M 125 78 H 325 L 405 640 L 25 975 M 405 640 L 125 78"
+      stroke="#EF5A2A"
+      stroke-width="116"
+      stroke-linejoin="miter"
+      stroke-miterlimit="6"
+      stroke-linecap="square"
+    />
+  </g>
+</svg>
