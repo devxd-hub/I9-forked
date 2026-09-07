@@ -309,3 +309,5 @@ export const Navbar: React.FC<NavbarProps> = ({ currentRoute, onRouteChange }) =
     </header>
   );
 };
+
+export default Navbar;

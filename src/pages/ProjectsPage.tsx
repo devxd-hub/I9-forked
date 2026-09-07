@@ -9,6 +9,7 @@ import { SectionLabel } from '../components/primitives/SectionLabel.tsx';
 import { PrimaryButton, SecondaryButton, NexusFilterButton, NexusIconButton } from '../components/primitives/Button.tsx';
 import { ImageReveal } from '../components/primitives/ImageReveal.tsx';
 import { ProjectCard } from '../components/primitives/ProjectCard.tsx';
+import { FeaturedArtifactShowcase } from '../components/home/FeaturedArtifactShowcase.tsx';
 import { NexusIcon } from '../components/brand/NexusLogo.tsx';
 import { RevealSection, RevealText } from '../components/motion/MotionPrimitives.tsx';
 import { AppRoute, Project } from '../types.ts';
@@ -70,6 +71,17 @@ export const ProjectsPage: React.FC<ProjectsPageProps> = ({ onRouteChange }) => 
           </div>
         </Container>
       </RevealSection>
+
+      {/* 02.1 FEATURED EXHIBIT IN MOTION (VOXEN TACTILE PROTOTYPE) */}
+      {(() => {
+        const featuredProject = PROJECTS.find((p) => p.id === 'nxs-004') || PROJECTS[0];
+        return (
+          <FeaturedArtifactShowcase
+            project={featuredProject}
+            onSelectProject={(p) => setSelectedProject(p)}
+          />
+        );
+      })()}
 
       {/* Filter / Filter Bar */}
       <section className="py-6 border-b border-[rgba(10,10,9,0.12)] bg-[#EBE5DB]">

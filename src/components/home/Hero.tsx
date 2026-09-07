@@ -220,3 +220,5 @@ export const Hero: React.FC<HeroProps> = ({ onRouteChange }) => {
     </section>
   );
 };
+
+export default Hero;

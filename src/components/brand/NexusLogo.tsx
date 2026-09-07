@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import MetallicPaint from './MetallicPaint.tsx';
 
 export interface NexusIconProps {
@@ -268,7 +268,11 @@ export const NexusLogo: React.FC<NexusLogoProps> = ({
         className={`inline-flex items-center gap-3 select-none group ${onClick ? 'cursor-pointer' : ''} ${className}`}
         aria-label="NEXUS College Club"
       >
-        <NexusWordmark size={size} inverted={inverted} enableMetallicHover={shouldEnableMetallicHover} />
+        <NexusWordmark
+          size={size}
+          inverted={inverted}
+          enableMetallicHover={shouldEnableMetallicHover}
+        />
         {showSubtitle && (
           <span
             className={`font-dosis uppercase font-semibold pl-3 border-l ${
@@ -290,7 +294,11 @@ export const NexusLogo: React.FC<NexusLogoProps> = ({
       className={`inline-flex flex-col select-none group ${onClick ? 'cursor-pointer' : ''} ${className}`}
       aria-label="NEXUS College Club"
     >
-      <NexusWordmark size={size} inverted={inverted} enableMetallicHover={shouldEnableMetallicHover} />
+      <NexusWordmark
+        size={size}
+        inverted={inverted}
+        enableMetallicHover={shouldEnableMetallicHover}
+      />
       {showSubtitle && (
         <span
           className={`font-dosis uppercase font-semibold tracking-[0.28em] mt-0.5 ${subtitleSizes} ${subtitleColor}`}
@@ -301,3 +309,5 @@ export const NexusLogo: React.FC<NexusLogoProps> = ({
     </div>
   );
 };
+
+export default NexusLogo;
