@@ -9,6 +9,7 @@ import { SectionLabel } from '../components/primitives/SectionLabel.tsx';
 import { PrimaryButton, SecondaryButton } from '../components/primitives/Button.tsx';
 import { NexusIcon } from '../components/brand/NexusLogo.tsx';
 import { RevealSection, RevealText } from '../components/motion/MotionPrimitives.tsx';
+import { ColorBends } from '../components/motion/ColorBends.tsx';
 import { AppRoute } from '../types.ts';
 import { CheckCircle2, Clock, MapPin, Mail, ArrowRight } from 'lucide-react';
 
@@ -45,9 +46,29 @@ export const ContactPage: React.FC<ContactPageProps> = ({ onRouteChange }) => {
 
   return (
     <main id="nexus-contact-page" className="w-full bg-[#F3EEE5]">
-      {/* Header */}
-      <RevealSection className="pt-20 md:pt-28 pb-16 md:pb-24 border-b border-[rgba(10,10,9,0.12)]">
-        <Container>
+      {/* Header with Atmospheric ColorBends Shader Backdrop */}
+      <RevealSection className="relative pt-20 md:pt-28 pb-16 md:pb-24 border-b border-[rgba(10,10,9,0.12)] overflow-hidden bg-[#F3EEE5]">
+        {/* Generative ColorBends Interactive Background */}
+        <div className="absolute inset-0 z-0 pointer-events-none opacity-40 mix-blend-multiply overflow-hidden">
+          <ColorBends
+            colors={['#EF5A2A', '#F26504', '#2C2723', '#FF7A45', '#FAF6F0']}
+            rotation={90}
+            speed={0.2}
+            scale={1}
+            frequency={1}
+            warpStrength={1}
+            mouseInfluence={1}
+            noise={0.15}
+            parallax={0.5}
+            iterations={1}
+            intensity={1.5}
+            bandWidth={6}
+            transparent
+            color="#f26504"
+          />
+        </div>
+
+        <Container className="relative z-10">
           <div className="max-w-4xl space-y-6">
             <div className="flex flex-wrap items-center gap-3">
               <SectionLabel number="05" label="GET IN TOUCH" />
