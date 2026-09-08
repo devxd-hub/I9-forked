@@ -103,7 +103,7 @@ export const TeamPage: React.FC<TeamPageProps> = ({ onRouteChange }) => {
             <div className="space-y-4 mb-12">
               <SectionLabel number="04.1" label="COORDINATION" />
               <h2 className="font-fraunces font-bold text-3xl sm:text-4xl text-[#0A0A09] uppercase tracking-tight">
-                CLUB LEADS
+                COMMUNITY LEADS
               </h2>
               <p className="font-bitter text-[#66615A] max-w-2xl text-base leading-relaxed">
                 Students directing technology pipelines, creative direction, hardware lab sessions, and sprint cohorts.

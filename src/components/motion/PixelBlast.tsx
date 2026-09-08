@@ -80,7 +80,7 @@ void main() {
 `;
 
 const FRAGMENT_SHADER = `
-precision highp float;
+precision mediump float;
 varying vec2 v_uv;
 
 uniform vec2 u_resolution;
@@ -124,7 +124,7 @@ uniform vec4 u_ripple0; // xy: pos, z: startTime, w: amplitude
 uniform vec4 u_ripple1;
 uniform vec4 u_ripple2;
 
-// Pseudo-random hash
+// Fast pseudo-random hash
 float hash12(vec2 p) {
   vec3 p3 = fract(vec3(p.xyx) * 0.1031);
   p3 += dot(p3, p3.yzx + 33.33);
@@ -137,7 +137,7 @@ vec2 hash22(vec2 p) {
   return fract((p3.xx + p3.yz) * p3.zy);
 }
 
-// 2D Perlin-style noise
+// Optimized 2D Perlin-style noise
 float noise(vec2 p) {
   vec2 i = floor(p);
   vec2 f = fract(p);
@@ -149,17 +149,11 @@ float noise(vec2 p) {
   );
 }
 
-// Fractional Brownian Motion
+// 2-Octave Fast FBM
 float fbm(vec2 p) {
   float v = 0.0;
-  float a = 0.5;
-  vec2 shift = vec2(100.0);
-  mat2 rot = mat2(cos(0.5), sin(0.5), -sin(0.5), cos(0.5));
-  for (int i = 0; i < 3; ++i) {
-    v += a * noise(p);
-    p = rot * p * 2.0 + shift;
-    a *= 0.5;
-  }
+  v += 0.6 * noise(p);
+  v += 0.4 * noise(p * 2.0 + vec2(15.2, 33.7));
   return v;
 }
 
@@ -167,56 +161,48 @@ void main() {
   vec2 fragCoord = gl_FragCoord.xy;
   vec2 uv = v_uv;
   
-  // Aspect ratio normalized coordinate
-  float minRes = min(u_resolution.x, u_resolution.y);
-  vec2 st = (fragCoord - 0.5 * u_resolution) / minRes;
-
-  float t = u_time * u_speed;
-
-  // 1. CALCULATE SOFT CENTRAL X QUIET ZONE
+  // 1. EARLY DISCARD FOR QUIET ZONE CORE (Zero computation overhead for protected central X)
   vec2 quietOffset = (uv - u_quietCenter) / max(vec2(0.01), u_quietRadius);
   float distToQuietCenter = length(quietOffset);
+
+  if (distToQuietCenter < 0.45) {
+    gl_FragColor = vec4(0.0);
+    return;
+  }
 
   // Soft progressive feather: 0.0 inside core, smoothly climbs to 1.0 outside
   float quietMask = smoothstep(0.85, 0.85 + u_quietFeather, distToQuietCenter);
   float innerCore = smoothstep(0.4, 0.85, distToQuietCenter);
   float finalQuietZoneFactor = quietMask * innerCore;
 
-  // If we are strictly in the deep inner core of the central X, discard immediately for zero artifact
-  if (distToQuietCenter < 0.45) {
-    gl_FragColor = vec4(0.0);
-    return;
-  }
-
+  float minRes = min(u_resolution.x, u_resolution.y);
+  float t = u_time * u_speed;
   vec2 warpedUv = uv;
 
   // 2. SCROLL REACTIVITY: PARALLAX & VERTICAL FLUID DRIFT
-  vec2 scrollDisplacement = vec2(
-    sin(uv.y * 3.14 + t) * u_scrollVelocity * 0.015,
-    -u_scrollProgress * u_scrollParallax * 0.25 + u_scrollVelocity * 0.04
-  );
-  warpedUv += scrollDisplacement * finalQuietZoneFactor;
+  if (u_scrollProgress > 0.001 || abs(u_scrollVelocity) > 0.001) {
+    vec2 scrollDisplacement = vec2(
+      sin(uv.y * 3.14159 + t) * u_scrollVelocity * 0.015,
+      -u_scrollProgress * u_scrollParallax * 0.25 + u_scrollVelocity * 0.04
+    );
+    warpedUv += scrollDisplacement * finalQuietZoneFactor;
+  }
 
   // 3. CURSOR REACTIVITY: LOCALIZED TACTILE DISPLACEMENT & PRESSURE FIELD
   float distMouse = length((uv - u_mouse) * vec2(u_resolution.x / minRes, u_resolution.y / minRes));
   float cursorProximity = smoothstep(u_cursorRadius, 0.0, distMouse);
   float cursorExcitation = 0.0;
 
-  if (u_cursorInfluence > 0.01) {
+  if (u_cursorInfluence > 0.01 && cursorProximity > 0.01) {
     vec2 cursorDelta = (uv - u_mouse);
     vec2 cursorDir = normalize(cursorDelta + vec2(0.0001));
-    
-    // Soft elastic repulsion wave around the cursor
     float pushFactor = sin(cursorProximity * 3.14159) * 0.035 * u_cursorInfluence;
     warpedUv += cursorDir * pushFactor * finalQuietZoneFactor;
-    
     cursorExcitation = cursorProximity * u_cursorInfluence * finalQuietZoneFactor;
   }
 
   // 4. LIQUID DOMAIN WARPING
   if (u_liquid > 0.5) {
-    float mouseInfluence = smoothstep(u_liquidRadius, 0.0, distMouse);
-
     vec2 liquidOffset = vec2(
       sin(uv.y * 6.28 * u_patternScale * 0.3 + t * u_liquidWobbleSpeed),
       cos(uv.x * 6.28 * u_patternScale * 0.3 + t * u_liquidWobbleSpeed * 0.9)
@@ -224,9 +210,7 @@ void main() {
 
     float n = fbm(uv * u_patternScale + vec2(t * 0.2, -t * 0.15));
     liquidOffset += (vec2(n) - 0.5) * u_liquidStrength * 0.03;
-    liquidOffset += (uv - u_mouse) * mouseInfluence * u_liquidStrength * 0.04;
 
-    // Suppress liquid warping in the quiet zone
     warpedUv += liquidOffset * finalQuietZoneFactor;
   }
 
@@ -243,10 +227,9 @@ void main() {
       vec4 rip = ripples[i];
       if (rip.z > 0.0) {
         float age = u_time - rip.z;
-        if (age >= 0.0 && age < 3.0) {
+        if (age >= 0.0 && age < 2.5) {
           float radius = age * u_rippleSpeed;
-          vec2 ripPos = rip.xy;
-          float d = length(uv - ripPos);
+          float d = length(uv - rip.xy);
           float ring = abs(d - radius);
           float ringIntensity = smoothstep(u_rippleThickness, 0.0, ring);
           float decay = exp(-age * 1.8) * rip.w * u_rippleIntensity;
@@ -255,7 +238,6 @@ void main() {
         }
       }
     }
-    // Damp ripples as they approach the quiet zone
     rippleDisplacement *= finalQuietZoneFactor;
     ripplePulse *= finalQuietZoneFactor;
     warpedUv += vec2(rippleDisplacement);
@@ -275,18 +257,15 @@ void main() {
   float scrollDensityDamping = 1.0 - u_scrollProgress * 0.22;
   float targetDensity = u_patternDensity * 0.8 * scrollDensityDamping;
   
-  // Spatial hierarchy: denser at outer edges, sparser in the middle
   vec2 centerDistNorm = abs(uv - vec2(0.5, 0.5)) * 2.0;
   float edgeBoost = smoothstep(0.2, 0.9, max(centerDistNorm.x, centerDistNorm.y)) * 0.35;
   
-  // Vertical column text readability suppression (soft halo around central column)
   float centerColumnDist = abs(uv.x - 0.5) * 2.0;
   float textReadabilityFactor = smoothstep(0.15, 0.6, centerColumnDist) * 0.4 + 0.6;
 
   float cellThreshold = (1.0 - targetDensity) - edgeBoost * 0.2;
   float densityCheck = (cellDensityNoise * 0.7 + cellRnd.x * 0.3) * textReadabilityFactor * finalQuietZoneFactor;
 
-  // Cursor proximity slightly increases visibility of nearby pixels
   densityCheck += cursorExcitation * 0.12;
 
   if (densityCheck < cellThreshold) {
@@ -294,25 +273,20 @@ void main() {
     return;
   }
 
-  // Dynamic pixel radius with jitter, cursor excitation & ripple excitation
+  // Dynamic pixel radius with jitter & ripple excitation
   float jitter = (cellRnd.y - 0.5) * u_pixelSizeJitter;
-  float baseRadius = 0.32 + jitter * 0.25;
-  baseRadius += ripplePulse * 0.15;
-  baseRadius += cursorExcitation * 0.14;
+  float baseRadius = 0.32 + jitter * 0.25 + ripplePulse * 0.15 + cursorExcitation * 0.14;
   baseRadius = clamp(baseRadius, 0.1, 0.49);
 
   // 7. PIXEL SHAPE RENDERING
   float shapeDist = 0.0;
   if (u_variant == 1) {
-    // Square
     vec2 d = abs(cellUv);
     shapeDist = max(d.x, d.y);
   } else if (u_variant == 2) {
-    // Diamond
     vec2 d = abs(cellUv);
     shapeDist = d.x + d.y;
   } else {
-    // Circle (default)
     shapeDist = length(cellUv);
   }
 
@@ -327,19 +301,14 @@ void main() {
   float colorMix = cellRnd.x * 0.4 + cellDensityNoise * 0.3 + ripplePulse * 0.3 + cursorExcitation * 0.35;
   vec3 pixelColor = mix(u_color, u_secondaryColor, clamp(colorMix, 0.0, 1.0));
 
-  // Edge fade (soft vignetting around canvas boundaries)
   vec2 edgeDist = abs(uv - 0.5) * 2.0;
   float maxEdge = max(edgeDist.x, edgeDist.y);
   float edgeAlpha = 1.0 - smoothstep(1.0 - u_edgeFade, 1.0, maxEdge);
 
-  // Final Alpha: combines pixel mask, quiet zone falloff, intensity, scroll fade, and edge fade
   float scrollAlphaFade = 1.0 - smoothstep(0.7, 1.0, u_scrollProgress) * 0.5;
   float finalAlpha = pixelMask * u_intensity * edgeAlpha * finalQuietZoneFactor * scrollAlphaFade;
-  
-  // Extra subtle brightness lift for pixels near active cursor
   finalAlpha += cursorExcitation * 0.15 * finalQuietZoneFactor;
 
-  // Apply transparent mode blending
   if (u_transparent > 0.5) {
     gl_FragColor = vec4(pixelColor, clamp(finalAlpha, 0.0, 1.0));
   } else {
@@ -388,6 +357,97 @@ export const PixelBlast: React.FC<PixelBlastProps> = ({
   const [isVisible, setIsVisible] = useState(true);
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
 
+  // Store mutable uniforms in a ref so prop updates don't destroy/recompile WebGL
+  const propsRef = useRef({
+    variant,
+    pixelSize,
+    color,
+    secondaryColor,
+    patternScale,
+    patternDensity,
+    pixelSizeJitter,
+    enableRipples,
+    rippleSpeed,
+    rippleThickness,
+    rippleIntensityScale,
+    liquid,
+    liquidStrength,
+    liquidRadius,
+    liquidWobbleSpeed,
+    speed,
+    edgeFade,
+    transparent,
+    intensity,
+    scrollReactive,
+    scrollParallax,
+    cursorReactive,
+    cursorInfluence,
+    cursorRadius,
+    quietZoneCenter,
+    quietZoneRadius,
+    quietZoneFeather,
+  });
+
+  useEffect(() => {
+    propsRef.current = {
+      variant,
+      pixelSize,
+      color,
+      secondaryColor,
+      patternScale,
+      patternDensity,
+      pixelSizeJitter,
+      enableRipples,
+      rippleSpeed,
+      rippleThickness,
+      rippleIntensityScale,
+      liquid,
+      liquidStrength,
+      liquidRadius,
+      liquidWobbleSpeed,
+      speed,
+      edgeFade,
+      transparent,
+      intensity,
+      scrollReactive,
+      scrollParallax,
+      cursorReactive,
+      cursorInfluence,
+      cursorRadius,
+      quietZoneCenter,
+      quietZoneRadius,
+      quietZoneFeather,
+    };
+  }, [
+    variant,
+    pixelSize,
+    color,
+    secondaryColor,
+    patternScale,
+    patternDensity,
+    pixelSizeJitter,
+    enableRipples,
+    rippleSpeed,
+    rippleThickness,
+    rippleIntensityScale,
+    liquid,
+    liquidStrength,
+    liquidRadius,
+    liquidWobbleSpeed,
+    speed,
+    edgeFade,
+    transparent,
+    intensity,
+    scrollReactive,
+    scrollParallax,
+    cursorReactive,
+    cursorInfluence,
+    cursorRadius,
+    quietZoneCenter,
+    quietZoneRadius,
+    quietZoneFeather,
+  ]);
+
   // Pointer state & gentle inertia
   const mouseRef = useRef<{ x: number; y: number; targetX: number; targetY: number }>({
     x: 0.5,
@@ -396,7 +456,7 @@ export const PixelBlast: React.FC<PixelBlastProps> = ({
     targetY: 0.5,
   });
 
-  // Scroll state & smooth velocity tracking
+  // Scroll state & velocity tracking
   const scrollRef = useRef<{
     progress: number;
     targetProgress: number;
@@ -447,6 +507,20 @@ export const PixelBlast: React.FC<PixelBlastProps> = ({
     return () => observer.disconnect();
   }, []);
 
+  // Visibility change listener (pause when tab is hidden)
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+    const handleVisibility = () => {
+      if (document.hidden) {
+        setIsVisible(false);
+      } else {
+        setIsVisible(true);
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibility);
+    return () => document.removeEventListener('visibilitychange', handleVisibility);
+  }, []);
+
   // Window-level Pointer and Scroll tracking for seamless responsiveness
   useEffect(() => {
     const container = containerRef.current;
@@ -456,7 +530,6 @@ export const PixelBlast: React.FC<PixelBlastProps> = ({
       const rect = container.getBoundingClientRect();
       if (rect.width <= 0 || rect.height <= 0) return;
 
-      // Track pointer if within or reasonably near the hero boundaries
       if (
         e.clientY >= rect.top - 80 &&
         e.clientY <= rect.bottom + 80 &&
@@ -468,13 +541,14 @@ export const PixelBlast: React.FC<PixelBlastProps> = ({
         mouseRef.current.targetX = Math.max(0.0, Math.min(1.0, nx));
         mouseRef.current.targetY = Math.max(0.0, Math.min(1.0, ny));
 
-        // Check if pointer is outside the quiet zone before creating a subtle ripple
-        const qNormX = (nx - quietZoneCenter.x) / Math.max(0.01, quietZoneRadius.rx);
-        const qNormY = ((1.0 - ny) - quietZoneCenter.y) / Math.max(0.01, quietZoneRadius.ry);
+        const qCenter = propsRef.current.quietZoneCenter;
+        const qRadius = propsRef.current.quietZoneRadius;
+        const qNormX = (nx - qCenter.x) / Math.max(0.01, qRadius.rx);
+        const qNormY = ((1.0 - ny) - qCenter.y) / Math.max(0.01, qRadius.ry);
         const distToQuiet = Math.sqrt(qNormX * qNormX + qNormY * qNormY);
 
         const now = performance.now() * 0.001;
-        if (distToQuiet > 0.88 && enableRipples && now - lastMoveTimeRef.current > 0.38) {
+        if (distToQuiet > 0.88 && propsRef.current.enableRipples && now - lastMoveTimeRef.current > 0.38) {
           lastMoveTimeRef.current = now;
           const idx = nextRippleIdxRef.current;
           ripplesRef.current[idx] = [nx, 1.0 - ny, now, 0.65];
@@ -498,32 +572,31 @@ export const PixelBlast: React.FC<PixelBlastProps> = ({
       window.removeEventListener('pointermove', handleGlobalPointerMove);
       window.removeEventListener('scroll', handleScroll);
     };
-  }, [enableRipples, quietZoneCenter.x, quietZoneCenter.y, quietZoneRadius.rx, quietZoneRadius.ry]);
+  }, []);
 
   // Pointer down handler for localized tactile pulse
-  const handlePointerDown = useCallback(
-    (e: React.PointerEvent<HTMLDivElement>) => {
-      if (!enableRipples) return;
-      const rect = e.currentTarget.getBoundingClientRect();
-      if (rect.width <= 0 || rect.height <= 0) return;
-      const nx = (e.clientX - rect.left) / rect.width;
-      const ny = (e.clientY - rect.top) / rect.height;
+  const handlePointerDown = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
+    if (!propsRef.current.enableRipples) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    if (rect.width <= 0 || rect.height <= 0) return;
+    const nx = (e.clientX - rect.left) / rect.width;
+    const ny = (e.clientY - rect.top) / rect.height;
 
-      const qNormX = (nx - quietZoneCenter.x) / Math.max(0.01, quietZoneRadius.rx);
-      const qNormY = (ny - quietZoneCenter.y) / Math.max(0.01, quietZoneRadius.ry);
-      const distToQuiet = Math.sqrt(qNormX * qNormX + qNormY * qNormY);
+    const qCenter = propsRef.current.quietZoneCenter;
+    const qRadius = propsRef.current.quietZoneRadius;
+    const qNormX = (nx - qCenter.x) / Math.max(0.01, qRadius.rx);
+    const qNormY = (ny - qCenter.y) / Math.max(0.01, qRadius.ry);
+    const distToQuiet = Math.sqrt(qNormX * qNormX + qNormY * qNormY);
 
-      if (distToQuiet > 0.85) {
-        const now = performance.now() * 0.001;
-        const idx = nextRippleIdxRef.current;
-        ripplesRef.current[idx] = [nx, 1.0 - ny, now, 1.1];
-        nextRippleIdxRef.current = (idx + 1) % 3;
-      }
-    },
-    [enableRipples, quietZoneCenter.x, quietZoneCenter.y, quietZoneRadius.rx, quietZoneRadius.ry]
-  );
+    if (distToQuiet > 0.85) {
+      const now = performance.now() * 0.001;
+      const idx = nextRippleIdxRef.current;
+      ripplesRef.current[idx] = [nx, 1.0 - ny, now, 1.1];
+      nextRippleIdxRef.current = (idx + 1) % 3;
+    }
+  }, []);
 
-  // WebGL Pipeline Lifecycle
+  // WebGL Pipeline Lifecycle: Stable program created ONCE
   useEffect(() => {
     const canvas = canvasRef.current;
     const container = containerRef.current;
@@ -628,17 +701,13 @@ export const PixelBlast: React.FC<PixelBlastProps> = ({
     const uRipple1 = gl.getUniformLocation(program, 'u_ripple1');
     const uRipple2 = gl.getUniformLocation(program, 'u_ripple2');
 
-    const rgbPrimary = hexToRgb(color);
-    const rgbSecondary = hexToRgb(secondaryColor);
-
-    const variantId = variant === 'square' ? 1 : variant === 'diamond' ? 2 : 0;
-
     let width = container.clientWidth || 800;
     let height = container.clientHeight || 600;
 
     function resize() {
       if (!canvas || !container || !gl) return;
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      // Cap DPR to 1.25 for stylized pixel matrix: saves 50%+ GPU load
+      const dpr = Math.min(window.devicePixelRatio || 1, 1.25);
       width = container.clientWidth;
       height = container.clientHeight;
       canvas.width = Math.max(1, Math.floor(width * dpr));
@@ -647,65 +716,69 @@ export const PixelBlast: React.FC<PixelBlastProps> = ({
     }
 
     resize();
-    window.addEventListener('resize', resize);
+    window.addEventListener('resize', resize, { passive: true });
 
     const startTime = performance.now();
 
     function render(now: number) {
       if (!gl || !program) return;
 
+      const p = propsRef.current;
       const elapsed = (now - startTime) * 0.001;
-      const effectiveSpeed = prefersReducedMotion ? 0.0 : speed;
+      const effectiveSpeed = prefersReducedMotion ? 0.0 : p.speed;
 
       // Smooth mouse lerp
-      mouseRef.current.x += (mouseRef.current.targetX - mouseRef.current.x) * 0.08;
-      mouseRef.current.y += (mouseRef.current.targetY - mouseRef.current.y) * 0.08;
+      mouseRef.current.x += (mouseRef.current.targetX - mouseRef.current.x) * 0.09;
+      mouseRef.current.y += (mouseRef.current.targetY - mouseRef.current.y) * 0.09;
 
-      // Smooth scroll progress & velocity calculation
+      // Smooth scroll progress & velocity
       const currentY = typeof window !== 'undefined' ? window.scrollY : 0;
       const scrollDelta = (currentY - scrollRef.current.lastY) * 0.003;
       scrollRef.current.lastY = currentY;
       scrollRef.current.velocity += (scrollDelta - scrollRef.current.velocity) * 0.12;
-
       scrollRef.current.progress += (scrollRef.current.targetProgress - scrollRef.current.progress) * 0.08;
 
       gl.useProgram(program);
 
+      const rgbPrimary = hexToRgb(p.color);
+      const rgbSecondary = hexToRgb(p.secondaryColor);
+      const variantId = p.variant === 'square' ? 1 : p.variant === 'diamond' ? 2 : 0;
+
       gl.uniform2f(uResolution, canvas.width, canvas.height);
       gl.uniform2f(uMouse, mouseRef.current.x, mouseRef.current.y);
       gl.uniform1f(uTime, elapsed);
-      gl.uniform1f(uPixelSize, pixelSize * (canvas.width / width));
-      gl.uniform1f(uPatternScale, patternScale);
-      gl.uniform1f(uPatternDensity, patternDensity);
-      gl.uniform1f(uPixelSizeJitter, pixelSizeJitter);
-      gl.uniform1f(uEnableRipples, enableRipples && !prefersReducedMotion ? 1.0 : 0.0);
-      gl.uniform1f(uRippleSpeed, rippleSpeed);
-      gl.uniform1f(uRippleThickness, rippleThickness);
-      gl.uniform1f(uRippleIntensity, rippleIntensityScale);
-      gl.uniform1f(uLiquid, liquid && !prefersReducedMotion ? 1.0 : 0.0);
-      gl.uniform1f(uLiquidStrength, liquidStrength);
-      gl.uniform1f(uLiquidRadius, liquidRadius);
-      gl.uniform1f(uLiquidWobbleSpeed, liquidWobbleSpeed);
+      gl.uniform1f(uPixelSize, p.pixelSize * (canvas.width / width));
+      gl.uniform1f(uPatternScale, p.patternScale);
+      gl.uniform1f(uPatternDensity, p.patternDensity);
+      gl.uniform1f(uPixelSizeJitter, p.pixelSizeJitter);
+      gl.uniform1f(uEnableRipples, p.enableRipples && !prefersReducedMotion ? 1.0 : 0.0);
+      gl.uniform1f(uRippleSpeed, p.rippleSpeed);
+      gl.uniform1f(uRippleThickness, p.rippleThickness);
+      gl.uniform1f(uRippleIntensity, p.rippleIntensityScale);
+      gl.uniform1f(uLiquid, p.liquid && !prefersReducedMotion ? 1.0 : 0.0);
+      gl.uniform1f(uLiquidStrength, p.liquidStrength);
+      gl.uniform1f(uLiquidRadius, p.liquidRadius);
+      gl.uniform1f(uLiquidWobbleSpeed, p.liquidWobbleSpeed);
       gl.uniform1f(uSpeed, effectiveSpeed);
-      gl.uniform1f(uEdgeFade, edgeFade);
-      gl.uniform1f(uTransparent, transparent ? 1.0 : 0.0);
-      gl.uniform1f(uIntensity, intensity);
+      gl.uniform1f(uEdgeFade, p.edgeFade);
+      gl.uniform1f(uTransparent, p.transparent ? 1.0 : 0.0);
+      gl.uniform1f(uIntensity, p.intensity);
       gl.uniform1i(uVariant, variantId);
 
       // Scroll & Cursor Reactivity
-      gl.uniform1f(uScrollProgress, scrollReactive && !prefersReducedMotion ? scrollRef.current.progress : 0.0);
-      gl.uniform1f(uScrollVelocity, scrollReactive && !prefersReducedMotion ? scrollRef.current.velocity : 0.0);
-      gl.uniform1f(uScrollParallax, scrollParallax);
-      gl.uniform1f(uCursorInfluence, cursorReactive && !prefersReducedMotion ? cursorInfluence : 0.0);
-      gl.uniform1f(uCursorRadius, cursorRadius);
+      gl.uniform1f(uScrollProgress, p.scrollReactive && !prefersReducedMotion ? scrollRef.current.progress : 0.0);
+      gl.uniform1f(uScrollVelocity, p.scrollReactive && !prefersReducedMotion ? scrollRef.current.velocity : 0.0);
+      gl.uniform1f(uScrollParallax, p.scrollParallax);
+      gl.uniform1f(uCursorInfluence, p.cursorReactive && !prefersReducedMotion ? p.cursorInfluence : 0.0);
+      gl.uniform1f(uCursorRadius, p.cursorRadius);
 
       gl.uniform3f(uColor, rgbPrimary[0], rgbPrimary[1], rgbPrimary[2]);
       gl.uniform3f(uSecondaryColor, rgbSecondary[0], rgbSecondary[1], rgbSecondary[2]);
 
-      // Quiet Zone Uniforms (in WebGL UV space: 0 at bottom, 1 at top)
-      gl.uniform2f(uQuietCenter, quietZoneCenter.x, 1.0 - quietZoneCenter.y);
-      gl.uniform2f(uQuietRadius, quietZoneRadius.rx, quietZoneRadius.ry);
-      gl.uniform1f(uQuietFeather, quietZoneFeather);
+      // Quiet Zone Uniforms
+      gl.uniform2f(uQuietCenter, p.quietZoneCenter.x, 1.0 - p.quietZoneCenter.y);
+      gl.uniform2f(uQuietRadius, p.quietZoneRadius.rx, p.quietZoneRadius.ry);
+      gl.uniform1f(uQuietFeather, p.quietZoneFeather);
 
       // Ripple Uniforms
       const r0 = ripplesRef.current[0];
@@ -742,39 +815,7 @@ export const PixelBlast: React.FC<PixelBlastProps> = ({
         if (program) gl.deleteProgram(program);
       }
     };
-  }, [
-    variant,
-    pixelSize,
-    color,
-    secondaryColor,
-    patternScale,
-    patternDensity,
-    pixelSizeJitter,
-    enableRipples,
-    rippleSpeed,
-    rippleThickness,
-    rippleIntensityScale,
-    liquid,
-    liquidStrength,
-    liquidRadius,
-    liquidWobbleSpeed,
-    speed,
-    edgeFade,
-    transparent,
-    intensity,
-    scrollReactive,
-    scrollParallax,
-    cursorReactive,
-    cursorInfluence,
-    cursorRadius,
-    quietZoneCenter.x,
-    quietZoneCenter.y,
-    quietZoneRadius.rx,
-    quietZoneRadius.ry,
-    quietZoneFeather,
-    isVisible,
-    prefersReducedMotion,
-  ]);
+  }, [isVisible, prefersReducedMotion]);
 
   return (
     <div

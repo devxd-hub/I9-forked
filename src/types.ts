@@ -46,6 +46,8 @@ export interface GalleryItem {
   description: string;
   location?: string;
   caption: string;
+  imageUrl?: string;
+  author?: string;
   aspectRatio?: '16/9' | '4/3' | '1/1' | '3/2' | '21/9' | 'portrait';
 }
 

@@ -235,7 +235,7 @@ export interface NexusLogoProps {
  * Features:
  * - N E [ICONIC X] U S
  * - Geometric, distinctive orange X centerpiece
- * - Subtle "COLLEGE CLUB" badge below or beside the wordmark
+ * - Subtle "COLLEGE COMMUNITY" badge below or beside the wordmark
  */
 export const NexusLogo: React.FC<NexusLogoProps> = ({
   className = '',
@@ -266,7 +266,7 @@ export const NexusLogo: React.FC<NexusLogoProps> = ({
         id={id}
         onClick={onClick}
         className={`inline-flex items-center gap-3 select-none group ${onClick ? 'cursor-pointer' : ''} ${className}`}
-        aria-label="NEXUS College Club"
+        aria-label="NEXUS College Community"
       >
         <NexusWordmark
           size={size}
@@ -279,20 +279,20 @@ export const NexusLogo: React.FC<NexusLogoProps> = ({
               inverted ? 'border-[rgba(243,238,229,0.2)]' : 'border-[rgba(10,10,9,0.18)]'
             } ${subtitleSizes} ${subtitleColor}`}
           >
-            COLLEGE CLUB
+            COLLEGE COMMUNITY
           </span>
         )}
       </div>
     );
   }
 
-  // Default: Stacked with subtle "COLLEGE CLUB" below
+  // Default: Stacked with subtle "COLLEGE COMMUNITY" below
   return (
     <div
       id={id}
       onClick={onClick}
       className={`inline-flex flex-col select-none group ${onClick ? 'cursor-pointer' : ''} ${className}`}
-      aria-label="NEXUS College Club"
+      aria-label="NEXUS College Community"
     >
       <NexusWordmark
         size={size}
@@ -303,7 +303,7 @@ export const NexusLogo: React.FC<NexusLogoProps> = ({
         <span
           className={`font-dosis uppercase font-semibold tracking-[0.28em] mt-0.5 ${subtitleSizes} ${subtitleColor}`}
         >
-          COLLEGE CLUB
+          COLLEGE COMMUNITY
         </span>
       )}
     </div>

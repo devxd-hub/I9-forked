@@ -15,11 +15,10 @@ interface FooterProps {
 /**
  * FOOTER
  * Minimal, clean footer containing:
- * - NEXUS COLLEGE CLUB
+ * - NEXUS COLLEGE COMMUNITY
  * - Navigation
  * - Socials
- * - University
- * - Location
+ * - University / Campus
  * - © 2026 NEXUS
  */
 export const Footer: React.FC<FooterProps> = ({ onRouteChange }) => {
@@ -35,9 +34,9 @@ export const Footer: React.FC<FooterProps> = ({ onRouteChange }) => {
       className="w-full bg-[#151311] text-[#F3EEE5] pt-16 md:pt-20 pb-12 border-t border-[rgba(243,238,229,0.1)]"
     >
       <Container>
-        <div className="grid grid-cols-2 md:grid-cols-12 gap-8 md:gap-12 pb-14 border-b border-[rgba(243,238,229,0.12)]">
-          {/* Logo & College Club */}
-          <div className="col-span-2 md:col-span-4 space-y-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-8 pb-14 border-b border-[rgba(243,238,229,0.12)]">
+          {/* Logo & College Community */}
+          <div className="col-span-2 md:col-span-1 space-y-4">
             <NexusLogo
               size="md"
               inverted={true}
@@ -48,13 +47,13 @@ export const Footer: React.FC<FooterProps> = ({ onRouteChange }) => {
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
             />
-            <p className="font-bitter text-sm text-[#F3EEE5]/75 max-w-sm pt-2 leading-relaxed">
+            <p className="font-bitter text-sm text-[#F3EEE5]/75 max-w-xs pt-2 leading-relaxed">
               A student-led community for building, experimenting, and creating projects that matter.
             </p>
           </div>
 
           {/* Navigation */}
-          <div className="col-span-1 md:col-span-3 space-y-3">
+          <div className="col-span-1 space-y-3">
             <h4 className="font-dosis text-xs uppercase tracking-[0.22em] text-[#EF5A2A] font-bold">
               NAVIGATION
             </h4>
@@ -93,7 +92,7 @@ export const Footer: React.FC<FooterProps> = ({ onRouteChange }) => {
           </div>
 
           {/* Socials */}
-          <div className="col-span-1 md:col-span-2 space-y-3">
+          <div className="col-span-1 space-y-3">
             <h4 className="font-dosis text-xs uppercase tracking-[0.22em] text-[#EF5A2A] font-bold">
               SOCIALS
             </h4>
@@ -142,29 +141,20 @@ export const Footer: React.FC<FooterProps> = ({ onRouteChange }) => {
           </div>
 
           {/* University & Location */}
-          <div className="col-span-2 md:col-span-3 space-y-4">
+          <div className="col-span-2 md:col-span-1 space-y-4">
             <div className="space-y-1">
               <h4 className="font-dosis text-xs uppercase tracking-[0.22em] text-[#EF5A2A] font-bold">
-                UNIVERSITY
+                CAMPUS
               </h4>
               <p className="text-xs font-bitter text-[#F3EEE5]/85">
                 Center for Student Innovation
               </p>
               <p className="text-xs font-bitter text-[#F3EEE5]/65">
-                Campus Innovation Commons
+                Design Pavilion • Lab 204
               </p>
             </div>
-
-            <div className="space-y-1 pt-1">
-              <h4 className="font-dosis text-xs uppercase tracking-[0.22em] text-[#EF5A2A] font-bold">
-                LOCATION
-              </h4>
-              <p className="text-xs font-bitter text-[#F3EEE5]/85">
-                Design & Technology Pavilion
-              </p>
-              <p className="text-xs font-bitter text-[#F3EEE5]/65">
-                Studio Lab 204 • North Campus
-              </p>
+            <div className="pt-2 text-xs font-mono text-[#F3EEE5]/40">
+              MEETINGS: THU 6:00 PM
             </div>
           </div>
         </div>
@@ -176,7 +166,7 @@ export const Footer: React.FC<FooterProps> = ({ onRouteChange }) => {
             <NexusWordmark size="xs" inverted={true} />
           </div>
           <p className="text-[#F3EEE5]/40 tracking-[0.2em]">
-            STUDENT-LED COLLEGE CLUB
+            STUDENT-LED COLLEGE COMMUNITY
           </p>
         </div>
       </Container>

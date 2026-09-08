@@ -108,11 +108,10 @@ export const ProcessSection: React.FC = () => {
             <SectionLabel number="02" label="METHOD & PROGRESSION" />
             
             {/* The Loop Concept Pill */}
-            <div className="hidden sm:inline-flex items-center gap-2 px-2.5 py-1 border border-[rgba(10,10,9,0.14)] bg-[#F3EEE5]/60 text-xs font-dosis tracking-[0.18em] text-[#66615A] uppercase select-none">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#EF5A2A]" />
+            <div className="hidden sm:inline-flex items-center gap-2 px-3 py-1 border border-[rgba(10,10,9,0.14)] bg-[#F3EEE5]/60 text-xs font-dosis tracking-[0.18em] text-[#66615A] uppercase select-none">
               <span>THE NEXUS LOOP</span>
-              <span className="text-[#0A0A09]/40">·</span>
-              <span className="text-[#0A0A09]/75 font-semibold">IDEA → PEOPLE → BUILD → SHARE ↺</span>
+              <span className="text-[#0A0A09]/40">/</span>
+              <span className="text-[#0A0A09]/80 font-semibold">IDEA → PEOPLE → BUILD → SHARE ↺</span>
             </div>
           </div>
 

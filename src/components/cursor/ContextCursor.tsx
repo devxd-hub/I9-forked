@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 /**
  * ContextCursor
@@ -11,11 +11,11 @@ import React, { useEffect, useState } from 'react';
  * Displays a tiny editorial badge ("VIEW →" or "OPEN →") ONLY when hovering
  * marked interactive elements (e.g. data-cursor="project" or data-cursor="gallery").
  *
- * Fully disabled on touch devices and reduced-motion preferences.
+ * Fully hardware accelerated with direct DOM transform updates (0 React re-renders on mousemove).
  * Native cursor is preserved. No giant glowing circles, no trails, no particles.
  */
 export const ContextCursor: React.FC = () => {
-  const [position, setPosition] = useState<{ x: number; y: number }>({ x: -100, y: -100 });
+  const cursorRef = useRef<HTMLDivElement | null>(null);
   const [cursorText, setCursorText] = useState<string | null>(null);
   const [isVisible, setIsVisible] = useState(false);
   const [isEnabled, setIsEnabled] = useState(false);
@@ -31,27 +31,45 @@ export const ContextCursor: React.FC = () => {
 
     setIsEnabled(true);
 
+    let currentVisible = false;
+    let currentText: string | null = null;
+
     const handleMouseMove = (e: MouseEvent) => {
-      setPosition({ x: e.clientX, y: e.clientY });
+      if (cursorRef.current) {
+        cursorRef.current.style.transform = `translate3d(${e.clientX + 14}px, ${e.clientY + 14}px, 0)`;
+      }
 
       const target = (e.target as HTMLElement)?.closest('[data-cursor]');
       if (target) {
         const cursorType = target.getAttribute('data-cursor');
+        let nextText: string | null = null;
         if (cursorType === 'project') {
-          setCursorText('VIEW →');
-          setIsVisible(true);
+          nextText = 'VIEW →';
         } else if (cursorType === 'gallery') {
-          setCursorText('OPEN →');
-          setIsVisible(true);
-        } else {
-          setIsVisible(false);
+          nextText = 'OPEN →';
         }
-      } else {
+
+        if (nextText) {
+          if (!currentVisible || currentText !== nextText) {
+            currentVisible = true;
+            currentText = nextText;
+            setCursorText(nextText);
+            setIsVisible(true);
+          }
+          return;
+        }
+      }
+
+      if (currentVisible) {
+        currentVisible = false;
+        currentText = null;
         setIsVisible(false);
       }
     };
 
     const handleMouseLeave = () => {
+      currentVisible = false;
+      currentText = null;
       setIsVisible(false);
     };
 
@@ -64,18 +82,19 @@ export const ContextCursor: React.FC = () => {
     };
   }, []);
 
-  if (!isEnabled || !isVisible || !cursorText) {
+  if (!isEnabled) {
     return null;
   }
 
   return (
     <div
+      ref={cursorRef}
       aria-hidden="true"
-      className="fixed pointer-events-none z-50 transition-opacity duration-200 ease-out"
+      className={`fixed top-0 left-0 pointer-events-none z-50 transition-opacity duration-150 ease-out ${
+        isVisible && cursorText ? 'opacity-100' : 'opacity-0'
+      }`}
       style={{
-        left: `${position.x + 14}px`,
-        top: `${position.y + 14}px`,
-        opacity: isVisible ? 1 : 0,
+        willChange: 'transform, opacity',
       }}
     >
       <div className="flex items-center gap-1.5 px-2.5 py-1 bg-[#0A0A09] text-[#F3EEE5] text-[10px] font-dosis font-bold tracking-[0.2em] uppercase border border-[rgba(239,90,42,0.4)] shadow-md select-none">

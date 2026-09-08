@@ -9,6 +9,8 @@ import { Navbar } from './components/layout/Navbar.tsx';
 import { Footer } from './components/layout/Footer.tsx';
 import { ContextCursor } from './components/cursor/ContextCursor.tsx';
 import { CinematicPreloader } from './components/preloader/CinematicPreloader.tsx';
+import { NexusPenguin } from './components/mascot/NexusPenguin.tsx';
+import { NexusAmbassadorStation } from './components/mascot/NexusAmbassadorStation.tsx';
 import { HomePage } from './pages/HomePage.tsx';
 import { AboutPage } from './pages/AboutPage.tsx';
 import { ProjectsPage } from './pages/ProjectsPage.tsx';
@@ -69,8 +71,10 @@ export default function App() {
     }
   };
 
+  const isProjectsWorkspace = currentRoute === '/projects';
+
   return (
-    <div className="min-h-screen flex flex-col bg-[#F3EEE5] text-[#0A0A09]">
+    <div className={`min-h-screen flex flex-col ${isProjectsWorkspace ? 'bg-[#0D0E13] text-[#F3EEE5]' : 'bg-[#F3EEE5] text-[#0A0A09]'}`}>
       {/* Cinematic Brand Preloader: "THE X IS THE NEXUS" */}
       {showPreloader && (
         <CinematicPreloader
@@ -82,14 +86,21 @@ export default function App() {
         />
       )}
 
+      {/* Global Isolated Mascot Director (Active on standard website pages) */}
+      {!isProjectsWorkspace && (
+        <NexusPenguin currentRoute={currentRoute} preloaderFinished={!showPreloader} />
+      )}
+
       {/* Contextual Cursor for fine-pointer desktop interactions */}
       <ContextCursor />
 
-      {/* Persistent Global Responsive Navbar */}
-      <Navbar currentRoute={currentRoute} onRouteChange={handleRouteChange} />
+      {/* Persistent Global Responsive Navbar (Shown on all standard pages) */}
+      {!isProjectsWorkspace && (
+        <Navbar currentRoute={currentRoute} onRouteChange={handleRouteChange} />
+      )}
 
       {/* Primary Route View */}
-      <main className="flex-1 w-full overflow-hidden flex flex-col">
+      <main className="flex-1 w-full flex flex-col">
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
             key={currentRoute}
@@ -107,8 +118,11 @@ export default function App() {
         </AnimatePresence>
       </main>
 
-      {/* Persistent Global Footer */}
-      <Footer onRouteChange={handleRouteChange} />
+      {/* Official NEXUS Mascot Ambassador Station (Interactive Playground right above Footer on standard pages) */}
+      {!isProjectsWorkspace && <NexusAmbassadorStation />}
+
+      {/* Persistent Global Footer (Shown on standard website pages) */}
+      {!isProjectsWorkspace && <Footer onRouteChange={handleRouteChange} />}
     </div>
   );
 }

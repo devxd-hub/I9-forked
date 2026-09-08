@@ -1,6 +1,6 @@
 {
   "name": "Remix NEXUS",
-  "description": "A student-led college club for ideation, collaboration, technology, creative production, and project building.",
+  "description": "A student-led college community for ideation, collaboration, technology, creative production, and project building.",
   "requestFramePermissions": [],
   "majorCapabilities": [
     "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"

@@ -72,25 +72,37 @@ export const GalleryTile: React.FC<GalleryTileProps> = ({
         className={`relative w-full overflow-hidden bg-[#E8E2D7] border-b border-[rgba(10,10,9,0.1)] ${aspectClass}`}
       >
         {/* Visual surface scaling 1 -> 1.03 on hover */}
-        <div className="w-full h-full flex flex-col items-center justify-center p-6 text-center transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.03]">
-          {/* Subtle background grid */}
-          <div
-            className="absolute inset-0 opacity-30 bg-[radial-gradient(#0a0a0910_1px,transparent_1px)] [background-size:14px_14px] pointer-events-none"
-            aria-hidden="true"
-          />
-
-          <div className="relative z-10 flex flex-col items-center">
-            <NexusIcon
-              size="lg"
-              className="mb-3 opacity-65 group-hover:opacity-100 transition-opacity transform group-hover:scale-105 duration-300"
+        <div className="w-full h-full flex flex-col items-center justify-center text-center transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.03]">
+          {item.imageUrl ? (
+            <img
+              src={item.imageUrl}
+              alt={item.title}
+              className="w-full h-full object-cover filter grayscale contrast-[1.05] group-hover:grayscale-0 group-hover:contrast-100 transition-all duration-500"
+              loading="lazy"
+              referrerPolicy="no-referrer"
             />
-            <span className="font-dosis text-[10px] font-bold tracking-[0.22em] uppercase px-2.5 py-0.5 border border-[rgba(10,10,9,0.2)] text-[#0A0A09] bg-[#FAF6F0]/80">
-              PHOTO // {item.category}
-            </span>
-            <span className="mt-2 font-bitter text-xs text-[#0A0A09] font-bold max-w-[220px] line-clamp-1">
-              {item.title}
-            </span>
-          </div>
+          ) : (
+            <div className="w-full h-full flex flex-col items-center justify-center p-6 bg-[#E8E2D7]">
+              {/* Subtle background grid */}
+              <div
+                className="absolute inset-0 opacity-30 bg-[radial-gradient(#0a0a0910_1px,transparent_1px)] [background-size:14px_14px] pointer-events-none"
+                aria-hidden="true"
+              />
+
+              <div className="relative z-10 flex flex-col items-center">
+                <NexusIcon
+                  size="lg"
+                  className="mb-3 opacity-65 group-hover:opacity-100 transition-opacity transform group-hover:scale-105 duration-300"
+                />
+                <span className="font-dosis text-[10px] font-bold tracking-[0.22em] uppercase px-2.5 py-0.5 border border-[rgba(10,10,9,0.2)] text-[#0A0A09] bg-[#FAF6F0]/80">
+                  PHOTO // {item.category}
+                </span>
+                <span className="mt-2 font-bitter text-xs text-[#0A0A09] font-bold max-w-[220px] line-clamp-1">
+                  {item.title}
+                </span>
+              </div>
+            </div>
+          )}
 
           {/* Framing corners */}
           <div className="absolute top-2 left-2 w-2 h-2 border-t border-l border-[#0A0A09]/30 pointer-events-none" />

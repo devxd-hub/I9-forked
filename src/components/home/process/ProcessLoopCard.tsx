@@ -74,12 +74,9 @@ export const ProcessLoopCard: React.FC<ProcessLoopCardProps> = ({
       {/* Top Meta Bar */}
       <div>
         <div className="flex items-center justify-between pb-3.5 mb-3 border-b border-[rgba(10,10,9,0.1)]">
-          <div className="flex items-center gap-2">
-            <span className="w-2 h-2 bg-[#EF5A2A]" aria-hidden="true" />
-            <span className="font-dosis font-bold text-xs tracking-[0.24em] text-[#0A0A09] uppercase">
-              THE NEXUS LOOP // {meta.number}
-            </span>
-          </div>
+          <span className="font-dosis font-bold text-xs tracking-[0.24em] text-[#0A0A09] uppercase">
+            THE NEXUS LOOP // {meta.number}
+          </span>
           <span className="font-dosis font-semibold text-[11px] tracking-[0.18em] text-[#66615A] uppercase">
             {meta.cycleRole}
           </span>

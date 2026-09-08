@@ -242,6 +242,16 @@ export const ColorBends: React.FC<ColorBendsProps> = ({
     return () => observer.disconnect();
   }, []);
 
+  // Pause when tab is inactive
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+    const handleVisChange = () => {
+      setIsVisible(!document.hidden);
+    };
+    document.addEventListener('visibilitychange', handleVisChange);
+    return () => document.removeEventListener('visibilitychange', handleVisChange);
+  }, []);
+
   // Pointer movement tracking
   const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -358,7 +368,7 @@ export const ColorBends: React.FC<ColorBendsProps> = ({
 
     function resize() {
       if (!canvas || !container || !gl) return;
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
       width = container.clientWidth;
       height = container.clientHeight;
       canvas.width = Math.max(1, Math.floor(width * dpr));
